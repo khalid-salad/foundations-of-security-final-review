@@ -1,0 +1,445 @@
+\documentclass[final]{article}
+\usepackage{final-review}
+\begin{document}
+\include{titlepage}
+\section{Advanced crypto}
+\subsection{Advanced Cryptographic Primitives}
+\begin{itemize}[nosep]
+    \item secure multiparty computation
+    \item homomorphic encryption
+\end{itemize}
+\subsection{Commitment Schemes}
+\subsubsection*{Commitment Problem}
+\begin{itemize}[nosep]
+    \item Bob “calls” the coin flip (i.e., heads or tails)
+    \item Alice flips the coin
+    \item Bob wins if her call is correct, Alice wins otherwise
+\end{itemize}
+Can we prevent Alice from cheating even if the players are not in the same physical location?
+
+\subsubsection*{Commitment Scheme}
+\begin{itemize}[nosep]
+    \item Two phases
+          \begin{enumerate}[nosep]
+              \item \underline{commit}: $A$ chooses a value $V$, $A$ sends a \textbf{commitment} of $V$ to $B$
+              \item \underline{reveal}: $A$ reveals the value of $V$
+          \end{enumerate}
+    \item Example: coin flipping
+          \begin{enumerate}[nosep]
+              \item \underline{commit}: $A$ flips a coin, $A$ sends a commitment (i.e., coin is heads or tails) to $B$
+          \end{enumerate}
+          \begin{itemize}[nosep]
+              \item $B$ calls the coin flip (i.e., heads or tails)
+          \end{itemize}
+          \begin{enumerate}[resume,nosep]
+              \item \underline{reveal}: $A$ reveals the value of the coin flip
+          \end{enumerate}
+    \item Requirements for commitment scheme
+          \begin{itemize}[nosep]
+              \item $B$ cannot learn the value of $V$ from the commitment
+              \item $A$ can reveal only the originally chosen value for a commitment
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Naive Attempt Using Hash Function}
+\begin{itemize}[nosep]
+    \item $H$: cryptographic hash function
+    \item If the set of possible values of $V$ are small (e.g., ``heads'' or ``tails''), $B$ can learn $V$ by simply trying all possible values
+\end{itemize}
+\subsubsection*{Secure Commitment Using Hash Function}
+\begin{itemize}[nosep]
+    \item Collision-free hash function $\rightarrow$ $A$ cannot cheat by finding $V_1$ and $V_2$ such that $H(r_1 \mid r_2 \mid V_1) = H(r_1 \mid r_2 \mid V_2)$
+          \begin{itemize}
+              \item $r_1$ prevents pre-computation of colliding $V_1$ and $V_2$
+          \end{itemize}
+\end{itemize}
+\subsection{Secret Sharing}
+\begin{itemize}[nosep]
+    \item \underline{Problem}: distribute a secret among $N$ participants such that
+          \begin{itemize}[nosep]
+              \item any group of at least $T$ participants can reconstruct the secret
+              \item no group of fewer than $T$ participants can reconstruct any part of it
+          \end{itemize}
+    \item Types
+          \begin{itemize}[nosep]
+              \item \textbf{unconditionally secure}: information-theoretically secure (unbounded attacker)
+              \item \textbf{conditionally secure}: typically more efficient
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Special Case: $T = N$}
+\begin{itemize}[nosep]
+    \item Unconditionally secure scheme:
+          \begin{enumerate}[nosep]
+              \item let the secret be a binary number $S$
+              \item pick $N - 1$ random numbers $R_1$, $R_2$, \dots, $R_{N-1}$ of the same length
+              \item give each participant $i$, $i < N$, the number $R_i$
+              \item give the last participant the result of $S \xor R_1 \xor R_2 \xor \dots \xor R_{N-1}$
+          \end{enumerate}
+    \item $N$ participants can reconstruct the secret by XORing their numbers:
+          \begin{itemize}[nosep]
+              \item \begin{align*}&R_1 \xor R_2 \xor \dots \xor R_{N-1} \xor \left(S \xor R_1 \xor R_2 \xor \dots \xor R_{N-1}\right) \\&= (R_1 \xor R_1) \xor (R_2 \xor R_2) \xor \dots \xor (R_{N-1} \xor R_{N-1}) \xor S \\&= S\end{align*}
+          \end{itemize}
+    \item $N - 1$ participants can compute only $S \xor R_i$, where $i$ is the missing participant (or $R_1 \xor R_2 \xor \dots \xor R_{N-1}$ if the last participant is missing)
+\end{itemize}
+\subsection{Shamir’s Secret Sharing}
+\begin{itemize}[nosep]
+    \item Proposed by Shamir in 1979
+    \item Unconditionally secure
+    \item Special case $T=2$
+          \begin{enumerate}[nosep]
+              \item let the secret be a number $S$
+              \item pick random number $A$
+              \item let each participant’s share be a random point on the line $Ax + S$
+          \end{enumerate}
+          \begin{multicols}{2}
+              \begin{figure}[H]
+                  \begin{tikzpicture}
+                      \begin{axis}[xlabel = $x$, ylabel=$y$, ticks=none, ymax=10]
+                          \addplot[color=red,thick]{0.8 * x + 1};
+                          \addlegendentry{$Ax + S$}
+                          \draw[black] (0, 1) circle (2pt) node [right] {$(x_i, y_i)$};
+                          \draw[black] (-3, -1.4) circle (2pt) node [right] {};
+                          \draw[black] (3, 3.4) circle (2pt) node [right] {};
+                      \end{axis}
+                  \end{tikzpicture}
+              \end{figure}
+              \item $T = 2$ participants can reconstruct the secret since any two points define a line
+              \item Single participant cannot learn the slope
+          \end{multicols}
+\end{itemize}
+\subsubsection*{General Case}
+\begin{itemize}[nosep]
+    \item Arbitrary T:
+          \begin{enumerate}[nosep]
+              \item let the secret be a number $S$
+              \item pick random numbers $A_1$, $A_2$, $\dots$, $A_{T-1}$
+              \item let each participant's share be a random point from the curve
+                    \[y = S + A_1 x + A_2 x^2 + \dots + A_{T-1}x^{T-1}\]
+          \end{enumerate}
+    \item At least $T$ points are necessary to define a polynomial of degree $T - 1$
+    \item Example $T = 3$
+          \begin{itemize}[nosep]
+              \item secret is a parabola (i.e., $A_2 x^2 + A1 x + S$)
+              \item there an infinite number of parabolas fitting two points
+              \item but three point define one uniquely
+          \end{itemize}
+\end{itemize}
+\subsection{Secure Multiparty Computation}
+\begin{itemize}[nosep]
+    \item \underline{Problem}: $N$ participants with private data $d_1$, $d_2$, \dots, $d_N$
+          \begin{itemize}[nosep]
+              \item participants would like to compute the value $F(d_1, d_2, \dots, d_N)$ of a public function $F$ over their private data
+              \item no participant $i$ would like to reveal any information about its data $d_i$
+          \end{itemize}
+    \item Requirements
+          \begin{itemize}
+              \item \textbf{privacy}: no information is revealed about any private data (other than what is revealed by the public output)
+              \item \textbf{correctness}: public function is correctly computed
+          \end{itemize}
+    \item Adversaries may be semi-honest (passive) or malicious (active)
+\end{itemize}
+\section{WiFi security}
+\subsection{Security Challenge}
+\begin{itemize}[nosep]
+    \item \underline{Problem}: no inherent physical protection
+    \item \textbf{joining} a network does not require physical access
+    \item radio transmissions are broadcast $\rightarrow$ anyone in range can \textbf{eavesdrop}
+    \item \textbf{injecting} new messages or \textbf{replaying} old messages is possible
+    \item \textbf{jamming} attacks against availability
+    \item jamming and injecting messages can be combined into \textbf{tampering} attacks
+\end{itemize}
+\subsection{Simple “Solutions” for Access Control}
+\subsubsection*{Hidden SSID}
+\begin{itemize}[nosep]
+    \item Association request must contain the SSID of the network
+          \begin{itemize}[nosep]
+              \item by default, the AP broadcasts it periodically in the beacon
+          \end{itemize}
+    \item AP may be configured to \textbf{stop announcing the SSID} $\rightarrow$ SSID may be be used as a ``password''
+    \item However,
+          \begin{itemize}[nosep]
+              \item SSID must be hard to guess
+              \item every authorized user must know the SSID
+              \item \textbf{SSID can be easily eavesdropped} whenever an authorized station connects to the network $\rightarrow$ does not provide any security
+          \end{itemize}
+    \item Tools are available for eavesdropping (e.g. Aircrack-ng)
+\end{itemize}
+\subsubsection*{MAC Address Based Filtering}
+\begin{itemize}[nosep]
+    \item AP may be configured to \textbf{allow only devices with certain MAC addresses} to connect
+          \begin{itemize}[nosep]
+              \item MAC addresses of all authorized devices must be registered in advance
+          \end{itemize}
+    \item However,
+          \begin{itemize}[nosep]
+              \item \textbf{MAC address is sent in plaintext} in every packet
+              \item many WLAN devices allow their MAC addresses to be changed $\rightarrow$ attacker can easily impersonate an authorized user
+          \end{itemize}
+\end{itemize}
+\subsection{802.11 Security Standards}
+\subsubsection*{WEP}
+\begin{itemize}
+    \item security is based on a 40 or 104-bit secret key
+          \begin{itemize}[nosep]
+              \item WiFi “password” shared by all users
+          \end{itemize}
+    \item \underline{confidentiality}: RC4 stream cipher
+          \begin{itemize}[nosep]
+              \item key is extended by a 24-bit IV, which is changed for each message $\rightarrow$ used as nonce to prevent key reuse problems
+          \end{itemize}
+    \item \underline{integrity}: encrypted CRC32 (Cyclic Redundancy Check) checksum
+    \item \underline{access control}: challenge-response between AP and station
+\end{itemize}
+\subsubsection*{WEP Design Flaws}
+\begin{itemize}[nosep]
+    \item Authentication
+          \begin{itemize}[nosep]
+              \item \textbf{one-way authentication} (only for station) $\rightarrow$ AP can be impersonated
+          \end{itemize}
+    \item Integrity protection
+          \begin{itemize}[nosep]
+              \item based on \textbf{error-detection code} (CRC32) instead of cryptographic hash $\rightarrow$ forging authentication tags is trivial
+              \item \textbf{no message replay protection}
+          \end{itemize}
+    \item Key usage
+          \begin{itemize}
+              \item \textbf{no session key}: long-term key used for all purposes (authentication, encryption, integrity protection)
+              \item \textbf{short nonce} (i.e., 24-bit IV) $\rightarrow$ danger of key reuse for stream cipher
+                    \begin{itemize}[nosep]
+                        \item busy network with 1000 packets per second reuses in less than 5 hours
+                    \end{itemize}
+              \item vulnerable to Fluhrer-Mantin-Shamir Attack
+                    \begin{itemize}[nosep]
+                        \item In practice, WEP keys can be broken in a matter of minutes (or less) $\rightarrow$ WEP is \textbf{not secure}
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
+\subsection{WiFi Protected Access (WPA)}
+\subsubsection*{WPA}
+\begin{itemize}[nosep]
+    \item Standard: 802.11i TKIP (Temporal Key Integrity Protocol
+    \item Design goals: \textbf{fix the flaws of WEP} and be \textbf{compatible with legacy hardware}
+    \item Overview
+          \begin{itemize}
+              \item \underline{key usage}: session key is established during a secure two-way authentication
+              \item \underline{confidentiality}: RC4 encryption, but with \textbf{48-bit IV}, which is \textbf{mixed thoroughly} with the session key and source MAC address
+                    \begin{itemize}[nosep]
+                        \item prevents key reuse and the Fluhrer-Mantin-Shamir attack
+                    \end{itemize}
+              \item \underline{integrity}: 64-bit message integrity codes computed using Michael, which is \textbf{computationally very efficient} but provides only ~20 bits of effective security
+                    \begin{itemize}[nosep]
+                        \item after wrong code, station is banned for a minute and needs to re-authenticate
+                    \end{itemize}
+              \item Deprecated in later revisions of the standard
+          \end{itemize}
+\end{itemize}
+\begin{itemize}
+    \item
+\end{itemize}
+\subsubsection*{WPA-2}
+\begin{itemize}[nosep]
+    \item Standard: \textbf{IEEE 802.11i}
+    \item WPA 2 Devices can be certified by the Wi-Fi Alliance
+\end{itemize}
+\subsubsection*{Phases}
+\begin{enumerate}[nosep]
+    \item Discovery
+          \begin{itemize}
+              \item agree on what authentication method and ciphers to use
+          \end{itemize}
+    \item Authentication
+          \begin{itemize}[nosep]
+              \item may use an authentication server
+              \item create a master session key
+          \end{itemize}
+    \item Key management
+          \begin{itemize}[nosep]
+              \item derive keys for various purposes
+          \end{itemize}
+    \item Protected data transfer
+    \item Connection termination
+\end{enumerate}
+\subsubsection*{Discovery Phase}
+\begin{itemize}[nosep]
+    \item \underline{Goal}: station and AP may support different sets of authentication methods and ciphers $\rightarrow$ they need to agree on which ones they will use
+    \item \textbf{Authentication and key-management suite}: how to perform mutual authentication and derive fresh keys
+          \begin{itemize}[nosep]
+              \item IEEE 802.1X, pre-shared key (PSK), or vendor-specific
+          \end{itemize}
+    \item \textbf{Cipher suite}: what ciphers to use for confidentiality and integrity
+          \begin{itemize}
+              \item WEP, TKIP, CCMP, or vendor-specific
+          \end{itemize}
+    \item Protocol
+          \begin{enumerate}[nosep]
+              \item AP can periodically \textbf{broadcast} its security capabilities using a \textbf{Beacon} (or station can ask for it using a Probe Request message)
+              \item Station \textbf{specifies} an authentication and cipher suite in an \textbf{Association Request}
+              \item if the AP \textbf{accepts} the specified suites, it sends an \textbf{Association Response}
+          \end{enumerate}
+\end{itemize}
+\subsubsection*{Authentication Phase}
+\begin{itemize}[nosep]
+    \item \underline{Goals:}
+          \begin{itemize}[nosep]
+              \item mutual authentication:
+                    \begin{enumerate}[nosep, label=\arabic*)]
+                        \item only authorized stations can use the network
+                        \item station is assured that it communicates with a legitimate network
+                    \end{enumerate}
+              \item generate \textbf{pairwise master key} (PMK)
+          \end{itemize}
+    \item Approaches
+          \begin{itemize}[nosep]
+              \item Pre-shared key (PSK)
+                    \begin{itemize}[nosep]
+                        \item password is deployed on each station and the AP manually
+                        \item PMK = PSK = generated from the password using a hash function
+                        \item ideal for home and small office networks
+                    \end{itemize}
+              \item IEEE 802.1X
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Key-Management Phase}
+\begin{itemize}[nosep]
+    \item \underline{Goals:}
+          \begin{itemize}[nosep]
+              \item derive \textbf{pairwise transient keys} from the PMK
+              \item distribute \textbf{group keys}
+          \end{itemize}
+    \item Pairwise transient key (PTK)
+          \begin{itemize}[nosep]
+              \item protecting data between station and AP
+              \item generated from PMK and the AP's and station's MAC addresses and nonces
+          \end{itemize}
+    \item Group temporal key (GTK)
+          \begin{itemize}[nosep]
+              \item protecting multicast communication
+              \item group master key (GMK): generated randomly by the AP
+              \item distributed using the PTK
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Protected Data Transfer Phase}
+\begin{itemize}[nosep]
+    \item Standard defines two schemes: TKIP and CCMP
+    \item TKIP: see WPA
+    \item CCMP (Counter mode CBC-MAC Protocol)
+          \begin{itemize}[nosep]
+              \item based on the CCM (Counter with CBC-MAC) authenticated encryption mode
+              \item integrity: CBC-MAC based on AES encryption
+              \item confidentiality: AES encryption in counter (CTR) mode
+              \item same 128-bit key for integrity and confidentiality (from PTK)
+              \item 48-bit packet number to prevent replay attacks
+          \end{itemize}
+\end{itemize}
+\subsubsection*{IEEE 802.1X}
+\begin{itemize}[nosep]
+    \item Standard for port-based network access control
+    \item Entities
+          \begin{itemize}[nosep]
+              \item supplicant = station
+              \item authenticator = access point
+              \item authentication server
+          \end{itemize}
+    \item Port-based: supplicant can access only the authentication server until the authentication succeeds
+    \item Authentication server does not have to be implemented on the access point $\rightarrow$ little overhead for the access point
+\end{itemize}
+\subsubsection*{EAP Authentication Methods}
+\begin{itemize}[nosep]
+    \item Extensible framework, not a specific authentication mechanism
+    \item Example methods
+          \begin{itemize}[nosep]
+              \item EAP-TLS: based on public-key certificates
+              \item EAP-GPSK (Generalized Pre-Shared Key): based on secret keys shared by the client and the server, uses symmetric-key cryptography
+          \end{itemize}
+\end{itemize}
+\section{IPSec}
+\begin{itemize}[nosep]
+    \item Collection of protocols and mechanisms, standardized by the Internet Engineering Task Force (IETF) in a series of publications
+    \item Provides
+          \begin{itemize}[nosep]
+              \item data confidentiality and integrity
+              \item source authentication (prevent address spoofing, i.e., sending from fake address)
+              \item protection against packet replay
+          \end{itemize}
+    \item Below the transport layer (TCP or UDP) $\rightarrow$ transparent to applications
+    \item End-to-end security between two hosts, a host and a network, or between two networks
+    \item Example Applications of IPSec
+          \begin{itemize}[nosep]
+              \item Secure remote access over the Internet
+              \item Secure virtual private network
+          \end{itemize}
+\end{itemize}
+\subsection{Transport Mode and Tunnel Mode}
+\begin{itemize}[nosep]
+    \item Transport mode
+          \begin{itemize}[nosep]
+              \item protects the payload of the IP packet
+              \item typically host-to-host communication
+          \end{itemize}
+    \item Tunnel mode
+          \begin{itemize}[nosep]
+              \item protects the entire IP packet by encapsulating it in the payload of a new IP packet
+              \item typically host-to-network or network-to-network communication
+          \end{itemize}
+\end{itemize}
+\begin{table}[H]
+    \begin{tabular}{lll}
+        \multicolumn{3}{c}{Protocol}                                                                             \\
+                 & Authentication Headher (AH)                   & Encapsulating Security Payloads (ESP)         \\\toprule
+        Modes    & \multicolumn{2}{c}{both transport and tunnel}                                                 \\
+        Provides & integrity, replay protection                  & integrity, confidentiality, replay protection \\
+        Protects & payload and IP header                         & payload                                       \\\bottomrule
+    \end{tabular}
+\end{table}
+\subsubsection*{Authentication Header}
+\begin{itemize}[nosep]
+    \item Services
+          \begin{itemize}[nosep]
+              \item data and origin integrity
+              \item replay-prevention
+          \end{itemize}
+    \item Message authentication
+          \begin{itemize}[nosep]
+              \item computed from immutable fields of the IP header, AH header (except ICV), and original payload
+              \item algorithms: HMAC-MD5, HMAC-SHA-1, HMAC-SHA-2, \dots
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Encapsulating Security Payload}
+\begin{itemize}[nosep]
+    \item Services: confidentiality, integrity (optional), replay prevention
+    \item Encryption: AES-CBC, 3DES-CBC, \dots
+    \item Message authentication: HMAC-SHA-1, AES-GMAC, \dots
+    \item Authenticated encryption: AES-GCM
+\end{itemize}
+\subsubsection*{Combining Modes and Protocols}
+\begin{itemize}[nosep]
+    \item Tunnel mode advantage: requires support only at the gateways
+    \item Transport mode advantage: requires support only at the hosts
+    \item AH advantage: authenticates some elements of the original header
+    \item ESP advantage: protects both integrity and confidentiality
+    \item Combining modes
+          \begin{itemize}[nosep]
+              \item IPSec tunnel can carry any IP packet $\rightarrow$ IPSec transport or tunnel packets can be sent through an IPSec tunnel
+              \item IPSec transport can protect any IP packet $\rightarrow$ IPSec transport or tunnel packets can be protected by outer IPSec transport
+              \item \dots
+              \item can be nested to any depth
+          \end{itemize}
+    \item Combination Examples
+          \begin{enumerate}[nosep]
+              \item AH in transport (for integrity) + ESP in transport (for confidentiality)
+              \item IPSec packets over tunnel
+          \end{enumerate}
+\end{itemize}
+\section{SSL / TLS}
+\section{DNSSEC}
+\section{SSH}
+\section{E-mail security}
+\section{Authentication and access control}
+\section{Software vulnerabilities and countermeasures}
+\section{Web vulnerabilities}
+\section{Malware}
+\section{Secure development}
+\section{Detection}
+\section{Isolation}
+\section{Denial of Service attacks}
+\section{Vulnerability scanners}
+\end{document}
