@@ -80,7 +80,7 @@ Can we prevent Alice from cheating even if the players are not in the same physi
           \end{itemize}
     \item $N - 1$ participants can compute only $S \xor R_i$, where $i$ is the missing participant (or $R_1 \xor R_2 \xor \dots \xor R_{N-1}$ if the last participant is missing)
 \end{itemize}
-\subsection{Shamir’s Secret Sharing}
+\subsection{Shamir's Secret Sharing}
 \begin{itemize}[nosep]
     \item Proposed by Shamir in 1979
     \item Unconditionally secure
@@ -88,7 +88,7 @@ Can we prevent Alice from cheating even if the players are not in the same physi
           \begin{enumerate}[nosep]
               \item let the secret be a number $S$
               \item pick random number $A$
-              \item let each participant’s share be a random point on the line $Ax + S$
+              \item let each participant's share be a random point on the line $Ax + S$
           \end{enumerate}
           \begin{multicols}{2}
               \begin{figure}[H]
@@ -730,7 +730,7 @@ Can we prevent Alice from cheating even if the players are not in the same physi
     \item Algorithm negotiation (KEXINIT)
           \begin{itemize}[nosep]
               \item both the client and the server send the list of key exchange, encryption, MAC, and compression algorithms that they support
-              \item chosen one: first on the client’s list that is also on the server’s list
+              \item chosen one: first on the client's list that is also on the server's list
           \end{itemize}
     \item End of key exchange (NEWKEYS)
           \begin{itemize}[nosep]
@@ -782,7 +782,402 @@ Can we prevent Alice from cheating even if the players are not in the same physi
           \end{itemize}
 \end{itemize}
 \section{E-mail security}
+\subsubsection*{Weaknesses}
+\begin{itemize}[nosep]
+    \item Simple Mail Transfer Protocol
+          \begin{itemize}[nosep]
+              \item Outgoing emails can be tampered (integrity), eavesdropped (confidentiality), or forged (authenticity/integrity)
+          \end{itemize}
+\end{itemize}
+\subsubsection*{E-Mail Threats}
+\begin{itemize}[nosep]
+    \item Spam: unsolicited messages sent in bulk
+    \item E-mail scam: advance-fee scam (a.k.a. ``Nigerian Prince'' scam), job scam, \dots
+    \item Phishing: collecting sensitive information (e.g., passwords, credit card numbers) or delivering malware by impersonating a trusted entity
+    \item Spear-phishing: phishing directed at specific targets (e.g., users)
+\end{itemize}
+\subsubsection*{Pretty Good Privacy (PGP)}
+\begin{itemize}[nosep]
+    \item General-purpose application for secure communication between users
+          \begin{itemize}[nosep]
+              \item confidentiality and integrity protection for files and e-mail
+              \item built on widely used asymmetric and symmetric-key cryptographic algorithms
+              \item communicating users know each other's public keys $\rightarrow$ trust
+          \end{itemize}
+    \item IETF standard: OpenPGP
+    \item Software
+          \begin{itemize}[nosep]
+              \item PGP went commercial in 1996
+              \item GnuPG is a free and open-source implementation of OpenPGP
+          \end{itemize}
+\end{itemize}
+\subsubsection*{PGP Key Management}
+\begin{itemize}[nosep]
+    \item Each user may have multiple public-private key pairs $\rightarrow$ key identifiers are used to specify which key is used
+    \item Key storage
+          \begin{itemize}[nosep]
+              \item private-key ring: user's own public-private key pairs
+                    \begin{itemize}[nosep]
+                        \item each entry has user identifier, key identifier, public key, encrypted private key
+                        \item private key is encrypted using a passphrase
+                    \end{itemize}
+              \item public-key ring: public keys of other users
+                    \begin{itemize}[nosep]
+                        \item each entry has user identifier, key identifier, public key, trust levels, and signatures from other users
+                        \item public-keys can be verified directly (e.g., delivery on secure channel) or using the “web of trust”
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
+\subsubsection*{PGP Web of Trust}
+\begin{figure}[H]
+    \begin{tikzpicture}[every node/.style={draw,circle,minimum size=1cm,label distance=0mm}]
+        \node[fill=gray!40,label=above right:\textbf{You}] (you) {};
+        \node[below left =of you,label=above:\textbf{A}] (a) {};
+    \end{tikzpicture}
+\end{figure}
+\subsubsection*{PGP Authentication}
+\begin{itemize}[nosep]
+    \item Digital signature using the sender's private key
+          \begin{itemize}[nosep]
+              \item hash using MD5, SHA-1 or SHA-2, and then sign using RSA or DSA
+          \end{itemize}
+    \item Message may be compressed after signature
+          \begin{itemize}[nosep]
+              \item ZIP, Bzip2, \dots
+          \end{itemize}
+\end{itemize}
+\subsubsection*{PGP Encryption}
+\begin{itemize}
+    \item Message may be compressed before encryption
+          \begin{itemize}[nosep]
+              \item ZIP, Bzip2, \dots
+          \end{itemize}
+    \item Generate a new 128-bit random symmetric key for each message
+          \begin{itemize}[nosep]
+              \item encrypt the message with the symmetric key using a block cipher in CFB mode (3DES, Blowfish, AES, \dots)
+              \item encrypt the symmetric key with the recipient's public key using RSA or ElGamal
+          \end{itemize}
+\end{itemize}
+\subsubsection*{S/MIME}
+\begin{itemize}[nosep]
+    \item MIME (Multipurpose Internet Mail Extension)
+          \begin{itemize}[nosep]
+              \item fixes the limitations posed by SMTP
+              \item New headers fields
+                    \begin{itemize}[nosep]
+                        \item Content-Type: type of message content
+                              \begin{itemize}[nosep]
+                                  \item multipart type: body contains multiple parts, each having a header (e.g., images in HTML message, attachments)
+                                  \item simple types (e.g., text/plain, image/jpeg, text/html)
+                              \end{itemize}
+                        \item Content-Transfer-Encoding: how binary data is represented in 7-bit ASCII (e.g., Base64, quoted-printable)
+                    \end{itemize}
+          \end{itemize}
+    \item Secure / Multipurpose Internet Mail Extension (S/MIME)
+          \begin{itemize}[nosep]
+              \item security enhancement to the MIME e-mail format standard
+              \item similar to PGP (Pretty Good Privacy)
+                    \begin{itemize}[nosep]
+                        \item both S/MIME and PGP enable encrypting and signing messages
+                        \item both have IETF standards
+                        \item both support state-of-the-art algorithms (AES, RSA, SHA-2, ...)
+                        \item S/MIME is likely to emerge as the industry standard for commercial and organizational use (e.g., Microsoft Outlook and Gmail support S/MIME)
+                        \item PGP is likely to remain the choice for personal e-mail security
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
+\subsubsection*{S/MIME Functionality}
+\begin{itemize}[nosep]
+    \item Functions
+          \begin{itemize}[nosep]
+              \item Signed data: message is digitally signed, and both the signature and the message are encoded (using Base64 representation)
+              \item Clear-signed data: similar to signed data, but only the signature is encoded
+              \item Enveloped data: encrypted message content and encrypted content-encryption key (i.e., session key) for one or more recipients (encoded using Base64)
+              \item Signed and enveloped data: signing and encrypting may be nested
+          \end{itemize}
+    \item MIME content types
+          \begin{itemize}[nosep]
+              \item application/pkcs7-mime: signed or enveloped data
+              \item multipart/signed: for clear-signed data, which contains a message and a signature (signature part is application/pkcs7-signature)
+          \end{itemize}
+\end{itemize}
+\subsubsection*{S/MIME Public Keys}
+\begin{itemize}[nosep]
+    \item Public-key certificates
+          \begin{itemize}[nosep]
+              \item based on X.509 digital certificate format
+              \item similar to PGP, digital certificates are distributed manually
+              \item however, certificates may be signed by a CA
+          \end{itemize}
+    \item Public keys are used for
+          \begin{itemize}[nosep]
+              \item verifying signatures
+              \item encrypting session keys
+                    \begin{itemize}[nosep]
+                        \item for enveloped data, the sender generates a random session key
+                        \item session key is encrypted with each recipient’s public key, and the message contents are encrypted (using symmetric-key crypto) with the session key
+                        \item upon receiving the message, a recipient can decrypt the session key, and then decrypt the message contents using the session key
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
+\subsubsection*{DKIM}
+\begin{itemize}
+    \item E-Mail Spoofing Problem
+    \item Attackers may use e-mail with forged sender addresses for spam/phishing
+    \item Limitations of PGP and S/MIME
+          \begin{itemize}[nosep]
+              \item depend on the sending and receiving users, who must install or configure software, share public keys, etc.
+              \item do not sign the message header, only the message contents
+          \end{itemize}
+    \item DomainKeys Identified Mail (DKIM)
+          \begin{itemize}[nosep]
+              \item specification for signing e-mail messages
+              \item implemented on the servers, therefore transparent to the users
+          \end{itemize}
+\end{itemize}
+\subsubsection*{DKIM Signature and Verification}
+\begin{itemize}[nosep]
+    \item Signature: Dkim-Signature header field
+          \begin{itemize}[nosep]
+              \item v: version
+              \item a: algorithm used for signature (RSA-SHA1, RSA-SHA256)
+              \item d: domain name
+              \item s: selector (if there are multiple public keys)
+              \item h: list of signed header fields
+              \item bh: hash of the body part of the message
+              \item b: signature in Base64
+          \end{itemize}
+    \item Verification
+          \begin{itemize}[nosep]
+              \item receiving SMTP server queries record s.\_domainkey.d using DNS
+              \item nameserver returns the public key corresponding to the signing private key
+          \end{itemize}
+\end{itemize}
+\subsubsection*{E-Mail Authentication Solutions}
+\begin{itemize}[nosep]
+    \item DomainKeys Identified Mail (DKIM)
+    \item Sender Policy Framework (SPF)
+          \begin{itemize}[nosep]
+              \item another system for preventing e-mail spoofing
+              \item DNS record lists all authorized sending hosts (i.e., e-mail servers) for a domain $\rightarrow$ receiving server can verify
+              \item may be combined with DKIM
+          \end{itemize}
+    \item Domain-based Message Authentication, Reporting and Conformance (DMARC)
+          \begin{itemize}[nosep]
+              \item built on top of DKIM and SPF, published using DNS record
+              \item enables domain owners to publish a policy (combination of DKIM and SPF) for verifying the legitimacy of e-mails from the domain
+          \end{itemize}
+\end{itemize}
 \section{Authentication and access control}
+\subsubsection*{Authentication}
+\begin{itemize}[nosep]
+    \item Authentication: reliably verifying the identity of someone or something
+          \begin{itemize}[nosep]
+              \item computer authenticates another computer
+              \item computer authenticates a user
+          \end{itemize}
+    \item Types of authentication
+          \begin{itemize}[nosep]
+              \item one-way authentication or mutual authentication
+              \item one-time or establishing a session (e.g., combined with key exchange)
+          \end{itemize}
+    \item Typical methods of computer authentication
+          \begin{itemize}[nosep]
+              \item cryptography-based
+              \item address-based
+          \end{itemize}
+\end{itemize}
+\subsubsection*{User Authentication}
+\begin{itemize}[nosep]
+    \item Types of user authentication factors
+          \begin{itemize}[nosep]
+              \item knowledge: some secret known only by the user (e.g., password)
+              \item ownership: some physical object possessed by the user (e.g., bank card)
+              \item inherence: some physical characteristic of the user (e.g., fingerprint)
+          \end{itemize}
+    \item Password-based user authentication
+          \begin{itemize}[nosep]
+              \item typical form of knowledge-based authentication
+              \item verifier stores the password in a database or file
+              \item often combined with cryptography-based approaches to protect the password from eavesdropping
+              \item password must be easy to remember but hard to guess
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Password-Based Authentication}
+\begin{itemize}
+    \item Problem: easy-to-remember passwords are weak
+          \begin{itemize}[nosep]
+              \item Miller’s law: number of objects an average human can hold in working memory is $7 \pm 2$
+              \item length of passwords that users can easily remember (i.e., not write down somewhere) is very limited
+          \end{itemize}
+    \item Brute-force attack: password guessing
+          \begin{itemize}
+              \item online: attacker must rely on the verifier to test the correctness of a password $\rightarrow$ verifier can limit the number of attempts (e.g., number of unsuccessful login)
+              \item offline: attacker can test the correctness of a password on its own
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Password Storage}
+\begin{itemize}[nosep]
+    \item Cleartext passwords are insecure
+          \begin{itemize}[nosep]
+              \item system administrators (and other local users) may easily read passwords
+              \item attackers who have compromised a system may be able to read passwords
+          \end{itemize}
+    \item Users tend to reuse passwords $\rightarrow$ breach may affect other systems as well
+    \item Store the cryptographic hash of the password
+          \begin{itemize}[nosep]
+              \item during authentication, the user enters the plaintext password, and the verifier computes its hash and compares it with the stored hash
+              \item attacker can perform offline guessing to recover the plaintext password
+          \end{itemize}
+    \item Brute-forcing multiple hashed passwords
+          \begin{itemize}[nosep]
+              \item first, precompute a table of [password, hash] values for possible passwords
+              \item second, for each hashed password, look up the precomputed hash value
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Salting}
+\begin{itemize}[nosep]
+    \item Before hashing a password mix it with a salt value
+          \begin{itemize}[nosep]
+              \item both when the password is set and during verification
+              \item verifier stores: username, salt, H(password + salt)
+          \end{itemize}
+    \item Salt value
+          \begin{itemize}
+              \item randomly generated for each user account
+              \item may be stored in plaintext by the verifier
+          \end{itemize}
+    \item Salt values do not have to be memorized $\rightarrow$ strong randomness
+          \begin{itemize}
+              \item prevents precomputing hashes since the attacker cannot consider all possible salt values (different salt values require different precomputation)
+              \item also hides identical passwords, which would result in identical hashes
+          \end{itemize}
+    \item However, it does not make guessing a single password harder (assuming that the attacker knows the salt)
+\end{itemize}
+\subsubsection*{Multi-Factor Authentication}
+\begin{itemize}[nosep]
+    \item User is authenticated only after passing multiple independent authentication mechanisms
+          \begin{itemize}[nosep]
+              \item typically, each mechanism is built on a different type of factor (e.g., knowledge + possession), so it is independent of the other mechanisms
+              \item attacker must circumvent all authentication mechanisms to succeed
+          \end{itemize}
+    \item Possession factors
+          \begin{itemize}[nosep]
+              \item disconnected token: not connected to the client computer, typically the user manually enters authentication data displayed by the token
+              \item connected token: physically connected to the client computer (e.g., USB token)
+          \end{itemize}
+    \item Inherence factors
+          \begin{itemize}
+              \item includes fingerprint, face, voice, or iris recognition
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Access Control}
+\begin{itemize}[nosep]
+    \item Access control (i.e., authorization): approving or rejecting access requests
+    \item Abstractions
+          \begin{itemize}[nosep]
+              \item subjects: entities that can perform actions on the system
+              \item objects: resources to which access must be controlled
+          \end{itemize}
+    \item Control access to objects based on a policy
+\end{itemize}
+\subsubsection*{Discretionary Access Control (DAC)}
+\begin{itemize}[nosep]
+    \item Allows access rights to be propagated at the subjects’ discretion
+    \item Often implemented using the notion of owner
+          \begin{itemize}[nosep]
+              \item every object has an owner subject, who can set the permissions for that object
+          \end{itemize}
+    \item Used by popular operating systems (e.g., Unix and Windows)
+    \item Problem: non-malicious users are not necessarily trustworthy
+          \begin{itemize}[nosep]
+              \item phishing: subjects may be tricked into propagating their access rights to malicious entities
+              \item malware: malicious code running with a subject’s credentials can disclose or modify sensitive information
+              \item large organizations working with sensitive data may need centralized control
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Mandatory Access Control (MAC)}
+\begin{itemize}[nosep]
+    \item Restricts the access of subjects to objects based on a system-wide set of rules
+          \begin{itemize}[nosep]
+              \item system-wide rules are set by a central authority (e.g., system administrator)
+              \item policy is mandatory $\rightarrow$ users do not have full control over access to the resources that they create
+          \end{itemize}
+    \item Traditionally used for implementing multilevel security
+          \begin{itemize}[nosep]
+              \item objects have security classifications (e.g., “Top Secret”, “Secret”)
+              \item subjects have security clearances
+          \end{itemize}
+    \item Available in some form on many modern operating systems
+          \begin{itemize}[nosep]
+              \item SELinux and AppArmor for Linux, and Mandatory Integrity Control for Windows
+          \end{itemize}
+    \item May be combined with DAC: grant access only if both DAC and MAC permit the access
+\end{itemize}
+\subsubsection*{Access Control Models}
+\begin{itemize}[nosep]
+    \item Access control list (ACL): list permissions for each object
+          \begin{itemize}[nosep]
+              \item for each object, list pairs of [subject, access right]
+          \end{itemize}
+    \item Role-based access control (RBAC): row oriented
+          \begin{itemize}[nosep]
+              \item create a set of roles (e.g., based on real-world job functions), and assign a role (or roles) to each subject
+              \item for each role, list pairs of [object, access right]
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Unix Access Control}
+\begin{itemize}[nosep]
+    \item user: has a unique UID (special UID = 0 for root user)
+    \item group (collection of multiple users): has a unique GID
+    \item Access control abstraction
+          \begin{itemize}[nosep]
+              \item subject = process
+                    \begin{itemize}[nosep]
+                        \item has an effective UID and GID (as well as real and saved UIDs and GIDs)
+                    \end{itemize}
+              \item object = file
+                    \begin{itemize}[nosep]
+                        \item has an owner (UID) and a group (GID), typically inherited from the process that created the file
+                        \item almost everything is a file on a Unix system (regular files, directories, devices, Unix domain sockets, \dots)
+                    \end{itemize}
+              \item Each file has 12 permission bits
+                    \begin{itemize}[nosep]
+                        \item read, write, and execute permission for owner, group, and others
+                        \item set user ID (setuid), set group ID (setgid), sticky bits
+                    \end{itemize}
+              \item When a process wants to read/write/execute a file,
+                    \begin{enumerate}[nosep]
+                        \item if effective UID = file owner $\rightarrow$ use read/write/execute permission for owner
+                        \item else if effective GID = file group $\rightarrow$ use read/write/execute permission for group
+                        \item else $\rightarrow$ use read/write/execute permission for others
+                    \end{enumerate}
+              \item For directories,
+                    \begin{itemize}[nosep]
+                        \item read means listing the contents of the directory
+                        \item write means creating, renaming, and deleting files in the directory
+                        \item execute means accessing the files (and directories) within the directory (must also have execute permission on all the parent directories)
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Sticky, Set UID, and Set GID Bits}
+\begin{itemize}[nosep]
+    \item Sticky bit
+          \begin{itemize}[nosep]
+              \item when set on a directory, files within that directory can be renamed or deleted only by their owners, the directory owner, or a superuser
+              \item for example, sticky bit is typically used on the /tmp directory
+          \end{itemize}
+    \item Set UID bit
+          \begin{itemize}[nosep]
+              \item when set on an executable file, the effective UID of a process executing the file is set to the file owner UID
+              \item for example, set UID bit is typically used on the passwd command
+          \end{itemize}
+    \item Set GID bit
+          \begin{itemize}[nosep]
+              \item when set on an executable file, the effective GID of a process executing the file is set to the file group GID
+              \item when set on a directory, new files created within will inherit the GID of the directory
+          \end{itemize}
+\end{itemize}
 \section{Software vulnerabilities and countermeasures}
 \section{Web vulnerabilities}
 \section{Malware}
