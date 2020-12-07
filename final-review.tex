@@ -430,8 +430,357 @@ Can we prevent Alice from cheating even if the players are not in the same physi
           \end{enumerate}
 \end{itemize}
 \section{SSL / TLS}
+\subsubsection*{Secure Socket Layer}
+\begin{itemize}[nosep]
+    \item End-to-end security between two applications
+    \item Endpoint applications can implement it without the help of the operating systems or any intermediate devices
+    \item Developed by Netscape for securing HTTP $\rightarrow$ HTTPS = HTTP over SSL
+    \item very widely used, not just for HTTP (e.g., FTP, POP3, IMAP)
+\end{itemize}
+\subsubsection*{Overview}
+\begin{figure}[H]
+    \begin{tikzpicture}[every node/.style={align=center,draw,rectangle,fill=gray!40,node distance=0cm,minimum height=1.5cm, minimum width=2cm}]
+        \node (handshake) {SSL\\Handshake\\Protocol};
+        \node[right=of handshake] (cipher) {SSL Change\\Cipher Spec\\Protocol};
+        \node[right=of cipher] (alert) {SSL Alert\\Protocol};
+        \node[right=of alert] (http) {HTTP};
+        \path (handshake.south west) rectangle ([yshift=-1.5cm]http.south east) node[pos=0.5,minimum width=8.15cm] (record) {SSL Record Protocol};
+        \path (record.south west) rectangle ([yshift=-1.5cm]record.south east) node[pos=0.5,minimum width=8.15cm] (tcp) {TCP};
+        \path (tcp.south west) rectangle ([yshift=-1.5cm]tcp.south east) node[pos=0.5,minimum width=8.15cm] (ip) {IP};
+
+        \node[minimum size=0cm,inner sep=-0.1cm,fill=none,draw=none,left of=handshake, node distance=4cm] (negotiation) {algorithm negotiation,\\key exchange,\\authentication};
+        \node[minimum size=0cm,inner sep=-0.1cm,fill=none,draw=none,left of=record, node distance=7cm] (encryption) {encryption and\\message authentication};
+        \node[minimum size=0cm,inner sep=-0.1cm,fill=none,draw=none,above of=cipher, node distance=2cm] (switch) {switching algorithms\\and keys};
+        \node[minimum size=0cm,inner sep=-0.05cm,fill=none,draw=none,above of=http,node distance=2cm] (sending) {sending SSL related\\alerts, which may\\terminate the connection};
+
+        \draw[->] (negotiation.north east) to[bend left] ([xshift=0.5cm,yshift=0.1cm]handshake.north west);
+        \draw[->] (encryption.north east) to[bend left] (record.west);
+        \draw[->] (switch.south) to ([yshift=0.1cm]cipher.north);
+        \draw[->] (sending.south west) to[bend right] ([xshift=0.5cm,yshift=0.1cm]alert.north west);
+    \end{tikzpicture}
+\end{figure}
+\subsubsection*{SSL Record Protocol}
+\begin{itemize}[nosep]
+    \item Security 528
+          \begin{itemize}[nosep]
+              \item confidentiality: symmetric-key encryption (AES GCM, Salsa20, \dots)
+              \item integrity: message authentication codes based on symmetric-key cryptography (HMAC-SHA256, \dots)
+          \end{itemize}
+    \item Additional Services
+          \begin{itemize}[nosep]
+              \item fragmentation: fragment application data into records of at most 16 KiB
+              \item lossless compression: optional (default is no compression)
+          \end{itemize}
+\end{itemize}
+\subsubsection*{SSL Handshake Protocol}
+\begin{itemize}[nosep]
+    \item Phase 1: establish security capabilities
+          \begin{itemize}[nosep]
+              \item client\_hello:
+                    \begin{itemize}[nosep]
+                        \item highest SSL version supported by the client
+                        \item nonce (timestamp + random value)
+                        \item cipher suite: list of key-exchange methods, as well as encryption and MAC algorithms
+                        \item compression method: list of supported compression algorithms
+                    \end{itemize}
+              \item server\_hello:
+                    \begin{itemize}[nosep]
+                        \item highest SSL version supported by both the
+                              client and the server
+                        \item nonce
+                        \item chosen cipher suite and compression method
+                    \end{itemize}
+          \end{itemize}
+    \item Phase 2: server authentication and key exchange
+          \begin{itemize}[nosep]
+              \item certificate (optional): X.509 certificate (may be a chain)
+              \item server\_key\_exchange (optional):
+                    \begin{itemize}[nosep]
+                        \item parameters for Anonymous or Ephemeral Diffie-Hellman exchange
+                        \item public-key for RSA exchange if the certificate contains only a signing key
+                        \item signed by the server (together with the nonces)
+                    \end{itemize}
+              \item certificate\_request (optional): ask client for an X.509 certificate
+              \item server\_hello\_done: server is finished
+          \end{itemize}
+    \item Phase 3: client authentication and key exchange
+          \begin{itemize}[nosep]
+              \item certificate (optional): X.509 certificate if the server asked for a client certificate
+              \item client\_key\_exchange:
+                    \begin{itemize}[nosep]
+                        \item pre-master secret encrypted using public RSA key of the server
+                        \item parameters for D-H exchange
+                    \end{itemize}
+              \item certificate\_verify (optional): digital signature of all previous handshake messages
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Key Exchange Methods}
+\begin{itemize}[nosep]
+    \item Goal: exchange or agree on a pre-master secret (PMS)
+    \item RSA
+          \begin{itemize}[nosep]
+              \item client generates pre-master secret (PMS)
+              \item sends PMS to the server encrypted using RSA public-key encryption
+          \end{itemize}
+    \item Diffie-Hellman protocol
+          \begin{itemize}[nosep]
+              \item anonymous D-H: basic D-H with no authentication
+              \item fixed D-H: D-H parameters of the server ($X_A$ and $Y_A$) are fixed and $Y_A$ is contained in a digital certificate
+              \item ephemeral D-H: D-H with authentication
+          \end{itemize}
+\end{itemize}
+\subsubsection*{SSL Change Cipher Spec Protocol}
+\begin{itemize}[nosep]
+    \item Same for client and server
+          \begin{itemize}[nosep]
+              \item change\_cipher\_spec: signals that the communication party is switching to the negotiated cryptographic algorithms and keys
+              \item finished: hash value computed from the master secret and all handshake messages using HMAC with SHA hash function
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Session Resume}
+\begin{itemize}
+    \item Authentication and key exchange are complex $\rightarrow$ result needs to be reusable
+    \item Session
+          \begin{itemize}[nosep]
+              \item association between a client and a server
+              \item cipher suite, compression method, and master secret
+          \end{itemize}
+    \item Connection
+          \begin{itemize}[nosep]
+              \item within a session
+              \item keys and IVs for encryption and message authentication
+          \end{itemize}
+    \item Session ID: identifies a session
+          \begin{itemize}[nosep]
+              \item sent in ClientHello $\rightarrow$ may specify an existing session to be resumed
+              \item sent in ServerHello $\rightarrow$ server can accept resume by sending the same ID
+          \end{itemize}
+    \item Session resume skips all messages in the Handshake after the ClientHello and ServerHello messages
+          \begin{itemize}[nosep]
+              \item new keys and IVs are generated from the nonces in the Hello messages
+          \end{itemize}
+\end{itemize}
+
+\subsubsection*{Transport Layer Security}
+\begin{itemize}[nosep]
+    \item only minor differences compared to SSL 3.0:
+          \begin{itemize}[nosep]
+              \item pseudorandom function for generating keys and MAC is based on HMAC
+              \item variable length padding (may prevent traffic analysis)
+              \item other minor changes
+          \end{itemize}
+\end{itemize}
+\subsubsection*{HTTPS}
+\begin{itemize}[nosep]
+    \item HTTP over SSL/TLS
+    \item Between the web browser and server:
+          \begin{itemize}[nosep]
+              \item HTTP client = SSL client
+              \item HTTP server = SSL server
+          \end{itemize}
+    \item Conventions
+          \begin{itemize}[nosep]
+              \item URL: \texttt{http\textbf{s}://} instead of \texttt{http://}
+              \item default TCP port is 443 instead of 80
+          \end{itemize}
+    \item HTTP request may be sent after SSL Finished messages
+    \item Protected information
+          \begin{itemize}[nosep]
+              \item URL, contents of the document, browser forms, cookies, headers
+              \item page served over HTTPS may include elements retrieved using HTTP
+          \end{itemize}
+\end{itemize}
 \section{DNSSEC}
+\subsubsection*{Domain Name System (DNS)}
+\begin{itemize}[nosep]
+    \item Millions of domain names → distributed database
+          \begin{itemize}[nosep]
+              \item dynamic data $\leftarrow$ IP address for a host may change
+              \item decentralized authority $\leftarrow$ each name has an owner
+          \end{itemize}
+    \item Hierarchical name space
+          \begin{itemize}[nosep]
+              \item domain: node in the DNS tree
+              \item for each domain, there is an authoritative server
+          \end{itemize}
+    \item Authoritative server
+          \begin{itemize}[nosep]
+              \item responds to queries about the domains for which it is responsible
+              \item may refer to other authoritative servers for a subdomain
+          \end{itemize}
+\end{itemize}
+\subsubsection*{DNS Queries and Responses}
+\begin{itemize}[nosep]
+    \item Transport protocol
+          \begin{itemize}[nosep]
+              \item UDP port 53
+              \item TCP for long responses (and some tasks between nameservers)
+          \end{itemize}
+    \item Messages: query and reply
+          \begin{itemize}[nosep]
+              \item 16-bit identification field: match queries with replies
+          \end{itemize}
+    \item Caching
+          \begin{itemize}[nosep]
+              \item received responses are cached by servers
+              \item each record has a Time-to-Live field, after expiry it must be queried again
+          \end{itemize}
+\end{itemize}
+\subsubsection*{DNS Weaknesses}
+\begin{itemize}[nosep]
+    \item DNS responses are not authenticated
+          \begin{itemize}[nosep]
+              \item responses can be sent over UDP transport protocol $\rightarrow$ anyone can respond from a spoofed (i.e., fake) IP address to a query
+          \end{itemize}
+    \item DNS is a key infrastructure
+          \begin{itemize}[nosep]
+              \item resolvers trust responses, users trust resolvers
+              \item by tampering with responses, an attacker may direct users to malicious websites or direct e-mail to malicious servers
+          \end{itemize}
+    \item DNS cache poisoning
+          \begin{itemize}[nosep]
+              \item attacker sends malicious response to a DNS server, which caches it $\rightarrow$ malicious response is served to all clients using the server
+              \item attacker does not have to be man-in-the-middle
+          \end{itemize}
+    \item Race to Respond First
+          \begin{itemize}[nosep]
+              \item If the attacker responds before the authoritative server, the DNS cache is poisoned with the malicious IP address
+                    \begin{itemize}[nosep]
+                        \item fake response is a single UDP packet from the spoofed (i.e., forged) IP address of the authoritative server
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Domain Name System Security Extensions (DNSSEC)}
+\begin{itemize}[nosep]
+    \item Set of extensions defined by the IETF to the DNS protocol
+    \item Guarantees origin authenticity and data integrity of DNS replies
+    \item Backwards compatible: responses can be interpreted by DNS servers and clients that do not support DNSSEC
+          \begin{itemize}[nosep]
+              \item of course, no guarantees are provided for these servers and clients
+          \end{itemize}
+    \item Does not provide confidentiality
+          \begin{itemize}[nosep]
+              \item responses are only authenticated but not encrypted
+          \end{itemize}
+    \item Based on public-key cryptography
+          \begin{itemize}[nosep]
+              \item every response is digitally signed
+          \end{itemize}
+\end{itemize}
+\subsubsection*{DNSSEC Public Keys and Signatures}
+\begin{itemize}[nosep]
+    \item Signature algorithms: RSA-SHA1, RSA-SHA256, ECDSA-SHA256, \dots
+    \item Trust anchor
+          \begin{itemize}[nosep]
+              \item known public key for an authoritative nameserver
+              \item typically included in the operating systems
+          \end{itemize}
+    \item Authentication chain
+          \begin{figure}[H]
+              \begin{tikzpicture}
+                  \node (anchor) {trust anchor};
+                  \node[below right =of anchor] (root) {root};
+                  \node[right =of root] (edu) {edu};
+                  \node[right =of edu] (uh) {uh.edu};
+                  \draw[->] (anchor) to[bend right] (root);
+                  \draw[->] (root) -- (edu) node[above,pos=0.5] {signs};
+                  \draw[->] (edu) -- (uh) node[above,pos=0.5] {signs};
+              \end{tikzpicture}
+          \end{figure}
+    \item Responses may include
+          \begin{itemize}[nosep]
+              \item RRSIG: digital signature for the contents of the response
+              \item DNSKEY: public key for a zone $\leftarrow$ if the response delegates
+          \end{itemize}
+\end{itemize}
+\subsubsection*{DNS over HTTPS and TLS}
+\begin{itemize}[nosep]
+    \item DNS over HTTPS (DoH)
+          \begin{itemize}[nosep]
+              \item DNS queries and responses are encoded into HTTPS requests and responses
+                    \begin{itemize}[nosep]
+                        \item provides integrity and confidentiality
+                        \item server may use HTTP/2 Push to send records in advance
+                    \end{itemize}
+              \item controversies and criticism: can impede traffic analysis for cybersecurity, may provide false sense of privacy, can impede traffic filtering by ISPs, \dots
+          \end{itemize}
+    \item DNS over TLS (DoT)
+          \begin{itemize}[nosep]
+              \item provides integrity and confidentiality
+          \end{itemize}
+\end{itemize}
 \section{SSH}
+\subsubsection*{Secure Shell (SSH) Protocol Stack}
+\begin{figure}[H]
+    \begin{tikzpicture}[every node/.style={align=center,draw,fill=gray!40,minimum width=6cm,minimum height=2.2cm,node distance=0cm}]
+        \node (auth) {\textbf{SSH User}\\\textbf{Authentication Protocol}\\Authenticates the client-side\\user to the server.};
+        \node[right =of auth] (conn) {\textbf{SSH}\\\textbf{Connection Protocol}\\Multiplexes the encrypted\\tunnel into several logical\\channels.};
+        \path (auth.south west) rectangle ([yshift=-2.2cm]conn.south east) node[pos=0.5,minimum width=12.02cm] (transport) {\textbf{SSH Transport Layer Protocol}\\Provides server authentication, confidentiality, and integrity.\\It may optionally also provide compression.};
+        \path (transport.south west) rectangle ([yshift=-2.2cm]transport.south east) node[fill=none,pos=0.5,minimum width=12.02cm] (tcp) {\textbf{TCP}\\Transmission control protocol provides reliable, connection-\\oriented end-to-end delivery.};
+        \path (tcp.south west) rectangle ([yshift=-2.2cm]tcp.south east) node[fill=none,pos=0.5,minimum width=12.02cm] (ip) {\textbf{IP}\\Internet protocol provides datagram delivery across\\multiple networks.};
+    \end{tikzpicture}
+\end{figure}
+\subsubsection*{SSH Transport Layer}
+\begin{itemize}
+    \item Packet Exchange
+    \item Identification string exchange
+          \begin{itemize}[nosep]
+              \item both the client and the server send: \texttt{SSH-protocolVersion-softwareVersion}
+          \end{itemize}
+    \item Algorithm negotiation (KEXINIT)
+          \begin{itemize}[nosep]
+              \item both the client and the server send the list of key exchange, encryption, MAC, and compression algorithms that they support
+              \item chosen one: first on the client’s list that is also on the server’s list
+          \end{itemize}
+    \item End of key exchange (NEWKEYS)
+          \begin{itemize}[nosep]
+              \item start using the algorithms and keys
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Server authentication}
+\begin{itemize}[nosep]
+    \item servers signs a hash of all the earlier messages and the new symmetric key
+    \item servers sends the signature and its public key to the client
+    \item Client needs to verify the public-key sent by the server (i.e., verify that the public key belongs to the server host)
+    \item Trust models
+          \begin{itemize}[nosep]
+              \item Certificate authority
+                    \begin{itemize}[nosep]
+                        \item client accepts public keys that are certified by a trusted CA
+                    \end{itemize}
+              \item Local database
+                    \begin{itemize}[nosep]
+                        \item client has a list of known pairs of hosts and public-keys
+                        \item typically, each user has a list stored in its home directory
+                              \begin{itemize}[nosep]
+                                  \item default location: \texttt{\~{}/.ssh/known\_hosts}
+                              \end{itemize}
+                    \end{itemize}
+          \end{itemize}
+    \item Known Hosts
+          \begin{itemize}[nosep]
+              \item First connection: verify and store host and public key
+              \item Subsequence connections: compare to stored key
+          \end{itemize}
+\end{itemize}
+\subsubsection*{SSH User Authentication Methods}
+\begin{itemize}[nosep]
+    \item Passwords
+          \begin{itemize}[nosep]
+              \item client sends a username and a password
+          \end{itemize}
+    \item Public key
+          \begin{itemize}[nosep]
+              \item client sends a public key and a signature based on the corresponding private key
+              \item server checks if the public key is acceptable and verifies the signature
+              \item typically, for every user account on the server host, there is a list of acceptable public keys stored at \texttt{\~{}/.ssh/authorized\_keys}
+          \end{itemize}
+    \item Host based
+          \begin{itemize}[nosep]
+              \item assumes that the server trusts the client host $\rightarrow$ since the client host has already authenticated the user, the server only needs to verify the identity of the client host
+              \item client sends a signature based on the private key of the client host
+          \end{itemize}
+\end{itemize}
 \section{E-mail security}
 \section{Authentication and access control}
 \section{Software vulnerabilities and countermeasures}
