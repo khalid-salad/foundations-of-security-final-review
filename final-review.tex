@@ -1179,6 +1179,179 @@ Can we prevent Alice from cheating even if the players are not in the same physi
           \end{itemize}
 \end{itemize}
 \section{Software vulnerabilities and countermeasures}
+\subsubsection*{Buffer Overflow}
+\begin{itemize}[nosep]
+    \item Buffer overflow / buffer overrun: anomalous condition where a process tries to store data beyond the boundaries of a fixed-length buffer
+          \begin{itemize}[nosep]
+              \item extra data overwrites adjacent memory, which may lead to denial-of-service or arbitrary code execution
+          \end{itemize}
+    \item Vulnerable programming languages
+          \begin{itemize}[nosep]
+              \item C, C++ and other “lower-level” languages without bounds checking
+              \item ``higher-level'' languages, such as Java and C\#, are generally not vulnerable
+          \end{itemize}
+    \item Attacker can supply malicious (i.e., long) input
+          \begin{itemize}[nosep]
+              \item remotely through a network connection (e.g., specially crafted HTTP request)
+              \item locally (e.g., by sending a specially crafted file to the target user)
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Typical Buffer Overflow Exploits}
+\begin{itemize}[nosep]
+    \item Attacker’s goal: execute arbitrary code (i.e., code chosen by the attacker)
+    \item execute arbitrary code (i.e., code chosen by the attacker)
+    \item Stack-based exploitation (“stack smashing”)
+          \begin{itemize}[nosep]
+              \item overflow a local buffer
+              \item overwrite local variables, function return addresses, exception handlers, etc.
+          \end{itemize}
+    \item Heap-based exploitation
+          \begin{itemize}
+              \item overflow a dynamically allocated buffer
+              \item overwrite other data, function pointers, etc.
+          \end{itemize}
+    \item Shellcode: small piece of code, which allows the attacker to control the compromised machine
+\end{itemize}
+\subsubsection*{Buffer-Overflow Exploit Countermeasures}
+\begin{itemize}
+    \item Compile-time -- hardening new software
+          \begin{itemize}[nosep]
+              \item programming languages
+              \item safe functions and libraries
+              \item compiler extensions
+          \end{itemize}
+    \item Run-time -- protecting existing software
+          \begin{itemize}[nosep]
+              \item executable space protection
+                    \begin{itemize}[nosep]
+                        \item Lot of exploits build on injecting and executing malicious code
+                        \item By separating the memory space of a process into executable and modifiable parts, code injection can be prevented
+                        \item Problem: modern computer architectures do not separate code from data
+                        \item Limitation: cannot fully protect programs that create and execute code at runtime (e.g., just-in-time compilers)
+                        \item Circumventing Executable Space Protection
+                              \begin{itemize}[nosep]
+                                  \item Attacker can re-use existing code from the memory space of the process for malicious purposes
+                                  \item Return-to-libc attack
+                                  \item for most processes, the standard C library is loaded into memory
+                                  \item attacker can change the return address of a function to point to the beginning of a function in the C library
+                                  \item common target: system function -- takes as argument a string, and executes it as a system command with the privileges of the process
+                                  \item attacker has control over the stack $\rightarrow$ attacker can set up parameters for the C library function
+                              \end{itemize}
+                    \end{itemize}
+              \item address space layout randomization
+                    \begin{itemize}[nosep]
+                        \item In order to reliably jump to an exploited code, the attacker needs to know its address
+                        \item Address Space Layout Randomization (ASLR)
+                              \begin{itemize}[nosep]
+                                  \item randomly arrange the positions of the executable, the stack, and the heap in the process’s address space
+                                  \item may prevent return-to-libc attacks
+                                  \item most operating systems (e.g., Windows, Linux) implement some randomization
+                              \end{itemize}
+                        \item Counter-countermeasures
+                              \begin{itemize}[nosep]
+                                  \item information leakage (e.g., printf vulnerability)
+                                  \item random guessing (Heap spraying)
+                              \end{itemize}
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Integer Overflow}
+\begin{itemize}[nosep]
+    \item Integer overflow occurs when an arithmetic operation leads to a value that is greater than the maximum value that can be stored
+    \item Affects most languages - even some managed languages, such as Java and C\#, are susceptible to integer overflow errors
+    \item Exploiting integer overflow errors
+          \begin{itemize}[nosep]
+              \item calculating indexes into arrays
+              \item calculating the amount of space to allocate for a buffer
+              \item checking whether an overflow could occur
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Input Validation}
+\begin{itemize}[nosep]
+    \item Sources of input
+          \begin{itemize}[nosep]
+              \item user supplied files and terminal input
+              \item command line arguments
+              \item environment variables
+              \item function calls from other modules
+              \item network packets (web applications in detail later)
+              \item \dots
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Format String Vulnerabilities}
+\begin{itemize}
+    \item Vulnerable functions
+          \begin{itemize}[nosep]
+              \item \mintinline{c}|sprintf|: writes to buffer
+              \item \mintinline{c}|fprintf|: writes to file
+              \item other members of the printf family (e.g., \mintinline{c}|snprintf|)
+              \item \mintinline{c}|printk|: used in the Linux kernel
+              \item other functions that use format strings (e.g., \mintinline{c}|syslog|)
+          \end{itemize}
+    \item Format placeholders
+          \begin{itemize}[nosep]
+              \item \mintinline{c}|%s| – string
+              \item \mintinline{c}|%d| – number (output in decimal format)
+              \item \mintinline{c}|%x| – number (output in hexadecimal format)
+              \item Special placeholder: \mintinline{c}|%n|
+                    \begin{itemize}[nosep]
+                        \item argument must be a pointer to a signed integer, where the number of characters printed so far will be written
+                    \end{itemize}
+          \end{itemize}
+    \item When variable is printed directly, introduces Vulnerability
+          \begin{itemize}[nosep]
+              \item \mintinline{c}|printf(name)|;
+              \item if \mintinline{c}|name| is provided as \mintinline{c}|%d%d%d| then the top three stack values will be printed
+          \end{itemize}
+    \item To prevent, use string formatting
+          \begin{itemize}[nosep]
+              \item \mintinline{c}|printf("%s%", name)|;
+              \item if \mintinline{c}|name| is provided as \mintinline{c}|%d%d%d| then \mintinline{c}|"%d%d%d"| will be printed
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Race Conditions}
+\begin{itemize}[nosep]
+    \item Race condition
+          \begin{itemize}[nosep]
+              \item when results depend on the sequence or timing of uncontrollable events
+              \item for example, when the output of a software depends on how the operating system schedules the execution of multiple processes or threads
+          \end{itemize}
+    \item Typically happens when interacting with
+          \begin{itemize}[nosep]
+              \item memory shared by multiple processes (or threads)
+              \item file system
+              \item signals and other interprocess communication mechanisms
+          \end{itemize}
+    \item Race condition bugs and errors
+          \begin{itemize}[nosep]
+              \item happen when events do not occur in the intended order
+              \item typically very difficult to reproduce and debug
+          \end{itemize}
+    \item Attack approaches
+          \begin{itemize}[nosep]
+              \item try multiple times (if possible)
+              \item slow down the target process
+              \item increase computational load on the machine
+              \item computational complexity attacks
+          \end{itemize}
+    \item Preventing Race Conditions
+          \begin{itemize}
+              \item Time of check to time of use
+                    \begin{itemize}[nosep]
+                        \item we cannot allow any changes in this interval
+                        \item trying to make it short is not enough
+                    \end{itemize}
+              \item Prevention techniques
+                    \begin{itemize}[nosep]
+                        \item work with file descriptors instead of filenames
+                        \item rely on filesystem access checks
+                        \item be careful with directories that are writable by everyone (e.g., \texttt{/tmp/})
+                        \item lock resources (files, databases, etc.)
+                        \item look out for non-atomic operations (e.g., \mintinline{c}|num++|)
+                        \item synchronization (e.g., semaphore, mutex)
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
 \section{Web vulnerabilities}
 \section{Malware}
 \section{Secure development}
