@@ -2060,5 +2060,165 @@ Can we prevent Alice from cheating even if the players are not in the same physi
     \item Virtual machines can also be used for sandboxing
 \end{itemize}
 \section{Denial of Service attacks}
+\begin{enumerate}[nosep]
+    \item Vulnerability exploitation
+          \begin{itemize}[nosep]
+              \item attacker may exploit software or configuration vulnerabilities to crash a system
+          \end{itemize}
+    \item Resource exhaustion
+          \begin{itemize}[nosep]
+              \item attacker uses up all of the victim’s resources $\rightarrow$ no resources left for serving authorized entities (might even crash the system)
+              \item attacker may exhaust bandwidth, computational power, memory, etc.
+          \end{itemize}
+    \item Distributed DoS (DDoS)
+          \begin{itemize}[nosep]
+              \item large number of attacking hosts
+              \item victim cannot tell which clients are malicious
+          \end{itemize}
+\end{enumerate}
+\subsubsection*{DOS Techniques}
+\begin{itemize}[nosep]
+    \item Botnets
+          \begin{itemize}[nosep]
+              \item Massive Flooding Attacks
+                    \begin{itemize}[nosep]
+                        \item Attacker can simply flood a server with TCP SYN packets
+                              \begin{itemize}[nosep]
+                                  \item traffic saturates the network link of the victim
+                                  \item packets from spoofed IP addresses look the same as legitimate connections
+                                  \item could also use other “junk” packets (e.g., ICMP Echo Request)
+                              \end{itemize}
+                        \item TCP connection flood
+                              \begin{itemize}[nosep]
+                                  \item attacking computers can establish TCP connections and send HTTP requests
+                                  \item Slowloris attack --- attacking computer sends a partial HTTP request then, periodically sends new HTTP header fields $\rightarrow$ server needs to keep track of HTTP connections
+                                  \item attacking computers can be blacklisted
+                              \end{itemize}
+                    \end{itemize}
+          \end{itemize}
+    \item Reflected Attacks
+          \begin{itemize}[nosep]
+              \item IP address spoofing
+                    \begin{itemize}[nosep]
+                        \item attacker can send packets with fake source-addresses
+                        \item recipient will believe that the packets originate from the fake source
+                    \end{itemize}
+          \end{itemize}
+    \item Amplification attack
+          \begin{itemize}[nosep]
+              \item used to magnify the bandwidth that is sent to a victim
+              \item e.g. DNS Amplification Attack
+                    \begin{itemize}[nosep]
+                        \item send a small (~64 byte) DNS query in UDP for ANY record of some domain name
+                        \item server responds with a reply in UDP containing all records (e.g., addresses, authoritative name servers, DKIM keys) for the hostname $\rightarrow$ maximum UDP response size = 512 bytes → 8x amplification
+                        \item Example: 2013 DNS amplification attack against Spamhaus
+                    \end{itemize}
+          \end{itemize}
+    \item TCP SYN Flood
+          \begin{itemize}[nosep]
+              \item Send a large number of TCP SYN packets from various spoofed source IP addresses
+              \item In most implementations, the number of pending connections is limited $\rightarrow$ non-malicious users will not be able to connect
+          \end{itemize}
+\end{itemize}
+\subsubsection*{DOS Mitigation}
+\begin{itemize}
+    \item Application front-end hardware
+          \begin{itemize}[nosep]
+              \item filter network traffic using high-performance dedicated hardware before it reaches the servers
+              \item does not protect against bandwidth exhaustion
+          \end{itemize}
+    \item Upstream filtering and DDoS-resistant hosting
+          \begin{itemize}[nosep]
+              \item in case of an attack, traffic may be redirected to a ``cleaning server,'' which filters malicious traffic and sends only non-malicious traffic to the actual server
+                    \begin{itemize}[nosep]
+                        \item cleaning server may be implemented as an application-level proxy
+                    \end{itemize}
+              \item DDoS-resistant hosting may be provided using content delivery networks
+              \item many providers offer such services (e.g., CloudFare, Akamai, Incapsula)
+          \end{itemize}
+    \item Ingress Filtering
+          \begin{itemize}[nosep]
+              \item service providers may forward only packets with legitimate source addresses
+              \item approaches
+                    \begin{itemize}[nosep]
+                        \item static packet filtering
+                              \begin{itemize}[nosep]
+                                  \item manually configure filtering based on addresses allocated by upstream network
+                              \end{itemize}
+                        \item Network Address Translation (NAT)
+                              \begin{itemize}[nosep]
+                                  \item address translation has an inherent “source validation side effect”
+                              \end{itemize}
+                        \item Reverse Path Forwarding
+                              \begin{itemize}[nosep]
+                                  \item forwarding decision for a packet is affected by its source address
+                                  \item used for loop-free forwarding of multicast packets and for ingress filtering
+                              \end{itemize}
+                        \item Unicast Reverse Path Forwarding (uRPF)
+                              \begin{itemize}[nosep]
+                                  \item strict mode: test if the incoming interface is the best path to the source according to forwarding information base (FIB), a.k.a, forwarding table $\rightarrow$ drop failed packets
+                                  \item Problem: routing is often asymmetric on the Internet backbone
+                                  \item strict mode would filter out packets on asymmetric routes
+                                  \item feasible mode: maintain multiple feasible paths in the FIB
+                                  \item loose mode: verify the existence of a route (regardless of interface of direction)
+                              \end{itemize}
+                    \end{itemize}
+          \end{itemize}
+    \item CAPTCHA (Completely Automated Public Turing test to tell Computers and Humans Apart)
+          \begin{itemize}[nosep]
+              \item challenge-response test used to determine if a client is human
+              \item typically based on hard AI problems, such as image recognition (e.g., character recognition)
+              \item Present one CAPTCHA per source IP address
+                    \begin{itemize}[nosep]
+                        \item if a client passes the test, whitelist the source IP address
+                    \end{itemize}
+              \item Limitations
+                    \begin{itemize}[nosep]
+                        \item Cannot protect against low-level attacks (massive flooding attacks)
+                        \item Attacker may circumvent CAPTCHA
+                              \begin{itemize}[nosep]
+                                  \item attacker may use cheap labor or machine learning algorithms to solve CAPTCHAs
+                                  \item in 2010, a study found that the price of solving 1000 CAPTCHAs is as low as \$1
+                                  \item attacker may also set up its own site, which reposts the target site’s CAPTCHAs
+                              \end{itemize}
+                        \item May present accessibility problems for users with disabilities
+                              \begin{itemize}[nosep]
+                                  \item audio CAPTCHAs are often provided as an alternative
+                                  \item if multiple CAPTCHA techniques are available, an attacker will opt for the one that is easiest to defeat
+                                  \item some users may have both visual and hearing impairment
+                              \end{itemize}
+                        \item Usability cost for honest users
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
 \section{Vulnerability scanners}
+\begin{itemize}[nosep]
+    \item Scan a host or an entire (sub)network for vulnerabilities
+    \item Typical functionality
+          \begin{enumerate}[nosep]
+              \item (find hosts and) find open ports on each host
+              \item determine what service is running on each port and try to determine which software product and version implements the service
+              \item test for known vulnerabilities, unsafe configurations, or information leakage
+          \end{enumerate}
+    \item Typically looks for known vulnerabilities
+          \begin{itemize}[nosep]
+              \item list of vulnerabilities must be updated
+          \end{itemize}
+    \item Modes
+          \begin{itemize}[nosep]
+              \item unauthenticated: black-box testing, performs the scan as an attacker would
+              \item authenticated: scanner can log in to some services and test local vulnerabilities
+          \end{itemize}
+    \item Advantages
+          \begin{itemize}[nosep]
+              \item does not require any security expertise
+              \item finds the most common vulnerabilities
+              \item mostly language/platform independent
+          \end{itemize}
+    \item Disadvantages
+          \begin{itemize}[nosep]
+              \item not guaranteed to find all vulnerabilities (→ use multiple scanners)
+              \item may produce many false positives
+          \end{itemize}
+\end{itemize}
 \end{document}
