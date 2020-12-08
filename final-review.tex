@@ -1828,7 +1828,237 @@ Can we prevent Alice from cheating even if the players are not in the same physi
           \end{itemize}
 \end{itemize}
 \section{Detection}
+\subsubsection*{MITRE ATT\&CK}
+\begin{enumerate}[nosep]
+    \item Initial Access -- gain initial foothold in target network or system
+    \item Execution -- execute malicious code on the system
+    \item Persistence -- maintain access across system or process restarts
+    \item Privilege Escalation -- gain higher-level permissions on the system
+    \item Defense Evasion -- avoid detection
+    \item Credential Access -- steal credentials (e.g., usernames and passwords)
+    \item Discovery -- gain knowledge about the system or internal network
+    \item Lateral Movement -- enter remote systems on the breached network
+    \item Command and Control -- establish C\&C, preferably in a stealthy way
+    \item Collection -- gather sensitive information
+    \item Exfiltration -- steal sensitive data
+    \item Impact -- disrupt availability or compromise integrity
+\end{enumerate}
+\subsubsection*{Intrusion Detection Systems}
+\begin{itemize}[nosep]
+    \item application or device that monitors a network or system for malicious activity
+          \begin{itemize}[nosep]
+              \item malicious activity is reported to administrators (e.g., send an alarm, log activity)
+          \end{itemize}
+    \item Monitored activity:
+          \begin{multicols}{2}
+              \begin{itemize}[nosep]
+                  \item Network-based IDS
+                        \begin{itemize}
+                            \item monitors network traffic
+                        \end{itemize}\vfill\null
+                  \item Host-based IDS
+                        \begin{itemize}[nosep]
+                            \item monitors activity on a host (e.g. file modifications and processes)
+                        \end{itemize}
+              \end{itemize}
+          \end{multicols}
+    \item Types of errors
+          \begin{itemize}[nosep]
+              \item false positive (i.e., false alarm) $\rightarrow$ wasting administrators’ time / effort
+              \item false negative $\rightarrow$ undetected attack
+          \end{itemize}
+    \item Detection method
+          \begin{itemize}
+              \item signature-based (also called misuse detection): detect specific patterns (e.g. byte sequences in traffic or instruction sequences in malware)
+                    \begin{itemize}[nosep]
+                        \item can detect only known attacks
+                    \end{itemize}
+              \item anomaly-based: detect ``abnormal'' behavior
+                    \begin{itemize}[nosep]
+                        \item prone to false-positive errors
+                    \end{itemize}
+          \end{itemize}
+    \item Intrusion Prevention System (IPS)
+          \begin{itemize}[nosep]
+              \item also called Intrusion Detection and Prevention System (IDPS)
+              \item can actively prevent or block intrusions (e.g. block IP addresses, drop packets)
+          \end{itemize}
+\end{itemize}
 \section{Isolation}
+\subsubsection*{Principles of Secure Design}
+\begin{itemize}[nosep]
+    \item Defense-in-depth: multiple-layers of security
+          \begin{itemize}[nosep]
+              \item attacker has to circumvent all of them to compromise its target
+          \end{itemize}
+    \item Compartmentalization
+          \begin{itemize}[nosep]
+              \item divide the system into compartments and isolate them from each other → limit the impact of a compromise
+              \item principle of least privilege: each module should have only the minimum set of privileges needed to serve its purpose
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Firewalls}
+\begin{itemize}[nosep]
+    \item Motivation -- A system can consist of hundreds or thousands of computing devices (both servers and clients)
+          \begin{itemize}[nosep]
+              \item many of them may have open ports that are accessible from the Internet
+              \item various operating systems running various services, implemented by various software
+              \item various software versions, configurations
+              \item keeping everything patched and properly configured is very expensive (or practically impossible)
+              \item on the other hand, an attacker may succeed by finding just one vulnerability (which it may easily find by scanning the network)
+          \end{itemize}
+    \item decision whether to allow or deny some traffic is based on a set of rules
+    \item Limitations
+          \begin{itemize}
+              \item cannot protect against
+                    \begin{itemize}[nosep]
+                        \item attacks that bypass them (e.g., USB drive with malware)
+                    \end{itemize}
+              \item can become a single point of failure
+                    \begin{itemize}[nosep]
+                        \item just like any other machine, a firewall can have vulnerabilities
+                        \item if the security of an entire network depends on a firewall, then compromising the firewall can have devastating effects
+                    \end{itemize}
+          \end{itemize}
+    \item stateless vs. stateful
+          \begin{multicols}{2}
+              \begin{itemize}[nosep]
+                  \item stateless (packet filtering)
+                        \begin{itemize}
+                            \item apply rules to each incoming/outgoing packet individually
+                            \item advantage: does not need to track state $\rightarrow$ simpler
+                            \item disadvantage: limited functionality, must process rules for every packet
+                        \end{itemize}
+                  \item stateful (session filtering)
+                        \begin{itemize}[nosep]
+                            \item apply rules only to the first few packets of each connection
+                            \item advantage: advanced functionality, does not need to process every packet
+                            \item disadvantage: must track the state of every connection
+                        \end{itemize}
+              \end{itemize}
+          \end{multicols}
+\end{itemize}
+\subsubsection*{Basic Packet Filtering}
+\begin{itemize}[nosep]
+    \item Based on protocol header information
+          \begin{itemize}[nosep]
+              \item network layer: source and destination IP address, higher level protocol
+              \item transport layer: TCP or UDP ports, TCP flags (SYN, ACK, FIN, \dots)
+              \item ICMP message types (e.g., ECHO Request)
+          \end{itemize}
+    \item Rulesets
+          \begin{itemize}
+              \item Multiple matching rules
+                    \begin{itemize}[nosep]
+                        \item first match $\rightarrow$ first matching rule is applied
+                        \item last match $\rightarrow$ last matching rule is applied
+                    \end{itemize}
+              \item Actions
+                    \begin{itemize}[nosep]
+                        \item usually accept / drop (i.e., allow / deny)
+                        \item can also include logging or alarms
+                    \end{itemize}
+              \item Ruleset needs to be built for the specific system
+                    \begin{itemize}[nosep]
+                        \item ``off-the-shelf'' configuration might not fit the system
+                    \end{itemize}
+              \item Best practice
+                    \begin{itemize}
+                        \item last (or first) rule should always be a ``block everything'' so only explicitly allowed traffic will pass through
+                        \item in other words, ``whitelist'' instead of ``blacklist''
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Application-Layer Firewalls}
+\begin{itemize}[nosep]
+    \item Basic packet inspection considers only the first four networking layers (up to transport layer)
+    \item Application-layer firewall
+          \begin{itemize}[nosep]
+              \item ``understands'' certain application-level protocols (e.g., FTP, DNS, HTTP)
+              \item rules can be defined in terms of these protocols
+          \end{itemize}
+    \item Proxying firewall
+          \begin{itemize}[nosep]
+              \item application-layer firewalls are sometimes implemented as proxies
+              \item client TCP connection is received by the proxy, which then connects to the actual server
+              \item proxy can inspect and forward traffic
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Demilitarized Zone (DMZ)}
+\begin{itemize}[nosep]
+    \item physical or logical subnetwork that contains and exposes an organization's external-facing services to an untrusted network such as the Internet
+    \item More secure
+          \begin{itemize}[nosep]
+              \item attacker needs to compromise / bypass two firewalls
+              \item misconfiguration has lower impact
+          \end{itemize}
+          \begin{figure}[H]
+              \begin{tikzpicture}
+                  \node[draw, circle] (internet) {Internet};
+                  \node[draw, rectangle, right =of internet] (fw1) {firewall};
+                  \node[draw, circle, right=of fw1] (dmz) {DMZ};
+                  \node[draw, rectangle, right =of dmz] (fw2) {firewall};
+                  \node[align=center,draw, circle, right=of fw2] (network) {internal\\network};
+
+                  \draw[<->] (internet) -- (fw1);
+                  \draw[<->] (fw1) -- (dmz);
+                  \draw[<->] (dmz) -- (fw2);
+                  \draw[<->] (fw2) -- (network);
+              \end{tikzpicture}
+          \end{figure}
+\end{itemize}
+\subsubsection*{Sandbox}
+\begin{itemize}[nosep]
+    \item security mechanism for separating a running program (or one part of a running program) from the rest of the system
+    \item Typically used to run untested or untrusted code (possibly from untrusted sources)
+          \begin{itemize}[nosep]
+              \item potentially vulnerable applications that are exposed to untrusted data (e.g., PDF viewer, e-mail client, web browser)
+              \item client-side scripts (~JavaScript) on webpages, macros, etc.
+              \item plug-ins, extensions, smartphone applications, etc.
+          \end{itemize}
+    \item Sandboxed code has limited access to system resources (e.g., files, memory, network) $\rightarrow$ reduces the impact of security vulnerabilities in sandboxed software
+\end{itemize}
+\subsubsection*{chroot jail}
+\begin{itemize}[nosep]
+    \item \mintinline{c}|int chroot(const char *path)|
+    \item Available on all Unix operating systems
+    \item Changes the root directory from / to the given path for the process
+    \item Can be performed only with root user privileges
+    \item After chroot, nothing outside the new root directory is available
+          \begin{itemize}[nosep]
+              \item system libraries and commands (e.g., libc, bash) cannot be used, unless a copy was made available in the new root
+          \end{itemize}
+    \item By definition, it should be undoable
+          \begin{itemize}[nosep]
+              \item however, a root user can get out $\rightarrow$ drop root privileges before executing the untrusted code
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Linux Secure Computing Mode (seccomp)}
+\begin{itemize}[nosep]
+    \item \mintinline{c}|int seccomp(SECCOMP_SET_MODE_STRICT, 0, NULL)|
+    \item Sandboxing tool in the Linux kernel
+    \item Once a process enters seccomp mode, it cannot make any system calls, except for
+          \begin{itemize}[nosep]
+              \item \mintinline{c}|exit(...)|, \mintinline{c}|sigreturn(...)|
+              \item \mintinline{c}|read(int filedescriptor, ...)|
+              \item \mintinline{c}|write(int filedescriptor, ...)|
+          \end{itemize}
+    \item can read and write files that were opened before entering seccomp mode
+    \item Typical usage: open necessary files and network connections, and enter seccomp mode
+\end{itemize}
+\subsubsection*{Isolation Based on Unix Access Control}
+\begin{itemize}[nosep]
+    \item Sandboxing: run untrusted code as an unprivileged user
+          \begin{itemize}[nosep]
+              \item for example, use setuid to run an executable as a dummy user
+              \item dummy user's access can be restricted using traditional Unix access control
+              \item using Linux namespaces, the running process can be further separated
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Virtual Machines}
+\begin{itemize}[nosep]
+    \item Virtual machines can also be used for sandboxing
+\end{itemize}
 \section{Denial of Service attacks}
 \section{Vulnerability scanners}
 \end{document}
