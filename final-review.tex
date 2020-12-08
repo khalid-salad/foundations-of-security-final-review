@@ -11,7 +11,7 @@
 \subsection{Commitment Schemes}
 \subsubsection*{Commitment Problem}
 \begin{itemize}[nosep]
-    \item Bob “calls” the coin flip (i.e., heads or tails)
+    \item Bob ''calls'' the coin flip (i.e., heads or tails)
     \item Alice flips the coin
     \item Bob wins if her call is correct, Alice wins otherwise
 \end{itemize}
@@ -43,7 +43,7 @@ Can we prevent Alice from cheating even if the players are not in the same physi
 \subsubsection*{Naive Attempt Using Hash Function}
 \begin{itemize}[nosep]
     \item $H$: cryptographic hash function
-    \item If the set of possible values of $V$ are small (e.g., ``heads'' or ``tails''), $B$ can learn $V$ by simply trying all possible values
+    \item If the set of possible values of $V$ are small (e.g. ``heads'' or ``tails''), $B$ can learn $V$ by simply trying all possible values
 \end{itemize}
 \subsubsection*{Secure Commitment Using Hash Function}
 \begin{itemize}[nosep]
@@ -147,7 +147,7 @@ Can we prevent Alice from cheating even if the players are not in the same physi
     \item \textbf{jamming} attacks against availability
     \item jamming and injecting messages can be combined into \textbf{tampering} attacks
 \end{itemize}
-\subsection{Simple “Solutions” for Access Control}
+\subsection{Simple ''Solutions'' for Access Control}
 \subsubsection*{Hidden SSID}
 \begin{itemize}[nosep]
     \item Association request must contain the SSID of the network
@@ -180,7 +180,7 @@ Can we prevent Alice from cheating even if the players are not in the same physi
 \begin{itemize}
     \item security is based on a 40 or 104-bit secret key
           \begin{itemize}[nosep]
-              \item WiFi “password” shared by all users
+              \item WiFi ''password'' shared by all users
           \end{itemize}
     \item \underline{confidentiality}: RC4 stream cipher
           \begin{itemize}[nosep]
@@ -435,7 +435,7 @@ Can we prevent Alice from cheating even if the players are not in the same physi
     \item End-to-end security between two applications
     \item Endpoint applications can implement it without the help of the operating systems or any intermediate devices
     \item Developed by Netscape for securing HTTP $\rightarrow$ HTTPS = HTTP over SSL
-    \item very widely used, not just for HTTP (e.g., FTP, POP3, IMAP)
+    \item very widely used, not just for HTTP (e.g. FTP, POP3, IMAP)
 \end{itemize}
 \subsubsection*{Overview}
 \begin{figure}[H]
@@ -593,7 +593,7 @@ Can we prevent Alice from cheating even if the players are not in the same physi
 \section{DNSSEC}
 \subsubsection*{Domain Name System (DNS)}
 \begin{itemize}[nosep]
-    \item Millions of domain names → distributed database
+    \item Millions of domain names $\rightarrow$ distributed database
           \begin{itemize}[nosep]
               \item dynamic data $\leftarrow$ IP address for a host may change
               \item decentralized authority $\leftarrow$ each name has an owner
@@ -793,8 +793,8 @@ Can we prevent Alice from cheating even if the players are not in the same physi
 \begin{itemize}[nosep]
     \item Spam: unsolicited messages sent in bulk
     \item E-mail scam: advance-fee scam (a.k.a. ``Nigerian Prince'' scam), job scam, \dots
-    \item Phishing: collecting sensitive information (e.g., passwords, credit card numbers) or delivering malware by impersonating a trusted entity
-    \item Spear-phishing: phishing directed at specific targets (e.g., users)
+    \item Phishing: collecting sensitive information (e.g. passwords, credit card numbers) or delivering malware by impersonating a trusted entity
+    \item Spear-phishing: phishing directed at specific targets (e.g. users)
 \end{itemize}
 \subsubsection*{Pretty Good Privacy (PGP)}
 \begin{itemize}[nosep]
@@ -824,7 +824,7 @@ Can we prevent Alice from cheating even if the players are not in the same physi
               \item public-key ring: public keys of other users
                     \begin{itemize}[nosep]
                         \item each entry has user identifier, key identifier, public key, trust levels, and signatures from other users
-                        \item public-keys can be verified directly (e.g., delivery on secure channel) or using the “web of trust”
+                        \item public-keys can be verified directly (e.g. delivery on secure channel) or using the ''web of trust''
                     \end{itemize}
           \end{itemize}
 \end{itemize}
@@ -867,10 +867,10 @@ Can we prevent Alice from cheating even if the players are not in the same physi
                     \begin{itemize}[nosep]
                         \item Content-Type: type of message content
                               \begin{itemize}[nosep]
-                                  \item multipart type: body contains multiple parts, each having a header (e.g., images in HTML message, attachments)
-                                  \item simple types (e.g., text/plain, image/jpeg, text/html)
+                                  \item multipart type: body contains multiple parts, each having a header (e.g. images in HTML message, attachments)
+                                  \item simple types (e.g. text/plain, image/jpeg, text/html)
                               \end{itemize}
-                        \item Content-Transfer-Encoding: how binary data is represented in 7-bit ASCII (e.g., Base64, quoted-printable)
+                        \item Content-Transfer-Encoding: how binary data is represented in 7-bit ASCII (e.g. Base64, quoted-printable)
                     \end{itemize}
           \end{itemize}
     \item Secure / Multipurpose Internet Mail Extension (S/MIME)
@@ -881,7 +881,7 @@ Can we prevent Alice from cheating even if the players are not in the same physi
                         \item both S/MIME and PGP enable encrypting and signing messages
                         \item both have IETF standards
                         \item both support state-of-the-art algorithms (AES, RSA, SHA-2, ...)
-                        \item S/MIME is likely to emerge as the industry standard for commercial and organizational use (e.g., Microsoft Outlook and Gmail support S/MIME)
+                        \item S/MIME is likely to emerge as the industry standard for commercial and organizational use (e.g. Microsoft Outlook and Gmail support S/MIME)
                         \item PGP is likely to remain the choice for personal e-mail security
                     \end{itemize}
           \end{itemize}
@@ -915,7 +915,7 @@ Can we prevent Alice from cheating even if the players are not in the same physi
               \item encrypting session keys
                     \begin{itemize}[nosep]
                         \item for enveloped data, the sender generates a random session key
-                        \item session key is encrypted with each recipient’s public key, and the message contents are encrypted (using symmetric-key crypto) with the session key
+                        \item session key is encrypted with each recipient's public key, and the message contents are encrypted (using symmetric-key crypto) with the session key
                         \item upon receiving the message, a recipient can decrypt the session key, and then decrypt the message contents using the session key
                     \end{itemize}
           \end{itemize}
@@ -979,7 +979,7 @@ Can we prevent Alice from cheating even if the players are not in the same physi
     \item Types of authentication
           \begin{itemize}[nosep]
               \item one-way authentication or mutual authentication
-              \item one-time or establishing a session (e.g., combined with key exchange)
+              \item one-time or establishing a session (e.g. combined with key exchange)
           \end{itemize}
     \item Typical methods of computer authentication
           \begin{itemize}[nosep]
@@ -991,9 +991,9 @@ Can we prevent Alice from cheating even if the players are not in the same physi
 \begin{itemize}[nosep]
     \item Types of user authentication factors
           \begin{itemize}[nosep]
-              \item knowledge: some secret known only by the user (e.g., password)
-              \item ownership: some physical object possessed by the user (e.g., bank card)
-              \item inherence: some physical characteristic of the user (e.g., fingerprint)
+              \item knowledge: some secret known only by the user (e.g. password)
+              \item ownership: some physical object possessed by the user (e.g. bank card)
+              \item inherence: some physical characteristic of the user (e.g. fingerprint)
           \end{itemize}
     \item Password-based user authentication
           \begin{itemize}[nosep]
@@ -1007,12 +1007,12 @@ Can we prevent Alice from cheating even if the players are not in the same physi
 \begin{itemize}
     \item Problem: easy-to-remember passwords are weak
           \begin{itemize}[nosep]
-              \item Miller’s law: number of objects an average human can hold in working memory is $7 \pm 2$
+              \item Miller's law: number of objects an average human can hold in working memory is $7 \pm 2$
               \item length of passwords that users can easily remember (i.e., not write down somewhere) is very limited
           \end{itemize}
     \item Brute-force attack: password guessing
           \begin{itemize}
-              \item online: attacker must rely on the verifier to test the correctness of a password $\rightarrow$ verifier can limit the number of attempts (e.g., number of unsuccessful login)
+              \item online: attacker must rely on the verifier to test the correctness of a password $\rightarrow$ verifier can limit the number of attempts (e.g. number of unsuccessful login)
               \item offline: attacker can test the correctness of a password on its own
           \end{itemize}
 \end{itemize}
@@ -1058,13 +1058,13 @@ Can we prevent Alice from cheating even if the players are not in the same physi
 \begin{itemize}[nosep]
     \item User is authenticated only after passing multiple independent authentication mechanisms
           \begin{itemize}[nosep]
-              \item typically, each mechanism is built on a different type of factor (e.g., knowledge + possession), so it is independent of the other mechanisms
+              \item typically, each mechanism is built on a different type of factor (e.g. knowledge + possession), so it is independent of the other mechanisms
               \item attacker must circumvent all authentication mechanisms to succeed
           \end{itemize}
     \item Possession factors
           \begin{itemize}[nosep]
               \item disconnected token: not connected to the client computer, typically the user manually enters authentication data displayed by the token
-              \item connected token: physically connected to the client computer (e.g., USB token)
+              \item connected token: physically connected to the client computer (e.g. USB token)
           \end{itemize}
     \item Inherence factors
           \begin{itemize}
@@ -1083,16 +1083,16 @@ Can we prevent Alice from cheating even if the players are not in the same physi
 \end{itemize}
 \subsubsection*{Discretionary Access Control (DAC)}
 \begin{itemize}[nosep]
-    \item Allows access rights to be propagated at the subjects’ discretion
+    \item Allows access rights to be propagated at the subjects' discretion
     \item Often implemented using the notion of owner
           \begin{itemize}[nosep]
               \item every object has an owner subject, who can set the permissions for that object
           \end{itemize}
-    \item Used by popular operating systems (e.g., Unix and Windows)
+    \item Used by popular operating systems (e.g. Unix and Windows)
     \item Problem: non-malicious users are not necessarily trustworthy
           \begin{itemize}[nosep]
               \item phishing: subjects may be tricked into propagating their access rights to malicious entities
-              \item malware: malicious code running with a subject’s credentials can disclose or modify sensitive information
+              \item malware: malicious code running with a subject's credentials can disclose or modify sensitive information
               \item large organizations working with sensitive data may need centralized control
           \end{itemize}
 \end{itemize}
@@ -1100,12 +1100,12 @@ Can we prevent Alice from cheating even if the players are not in the same physi
 \begin{itemize}[nosep]
     \item Restricts the access of subjects to objects based on a system-wide set of rules
           \begin{itemize}[nosep]
-              \item system-wide rules are set by a central authority (e.g., system administrator)
+              \item system-wide rules are set by a central authority (e.g. system administrator)
               \item policy is mandatory $\rightarrow$ users do not have full control over access to the resources that they create
           \end{itemize}
     \item Traditionally used for implementing multilevel security
           \begin{itemize}[nosep]
-              \item objects have security classifications (e.g., “Top Secret”, “Secret”)
+              \item objects have security classifications (e.g. ''Top Secret'', ''Secret'')
               \item subjects have security clearances
           \end{itemize}
     \item Available in some form on many modern operating systems
@@ -1122,7 +1122,7 @@ Can we prevent Alice from cheating even if the players are not in the same physi
           \end{itemize}
     \item Role-based access control (RBAC): row oriented
           \begin{itemize}[nosep]
-              \item create a set of roles (e.g., based on real-world job functions), and assign a role (or roles) to each subject
+              \item create a set of roles (e.g. based on real-world job functions), and assign a role (or roles) to each subject
               \item for each role, list pairs of [object, access right]
           \end{itemize}
 \end{itemize}
@@ -1187,20 +1187,20 @@ Can we prevent Alice from cheating even if the players are not in the same physi
           \end{itemize}
     \item Vulnerable programming languages
           \begin{itemize}[nosep]
-              \item C, C++ and other “lower-level” languages without bounds checking
+              \item C, C++ and other ''lower-level'' languages without bounds checking
               \item ``higher-level'' languages, such as Java and C\#, are generally not vulnerable
           \end{itemize}
     \item Attacker can supply malicious (i.e., long) input
           \begin{itemize}[nosep]
-              \item remotely through a network connection (e.g., specially crafted HTTP request)
-              \item locally (e.g., by sending a specially crafted file to the target user)
+              \item remotely through a network connection (e.g. specially crafted HTTP request)
+              \item locally (e.g. by sending a specially crafted file to the target user)
           \end{itemize}
 \end{itemize}
 \subsubsection*{Typical Buffer Overflow Exploits}
 \begin{itemize}[nosep]
-    \item Attacker’s goal: execute arbitrary code (i.e., code chosen by the attacker)
+    \item Attacker's goal: execute arbitrary code (i.e., code chosen by the attacker)
     \item execute arbitrary code (i.e., code chosen by the attacker)
-    \item Stack-based exploitation (“stack smashing”)
+    \item Stack-based exploitation (''stack smashing'')
           \begin{itemize}[nosep]
               \item overflow a local buffer
               \item overwrite local variables, function return addresses, exception handlers, etc.
@@ -1227,7 +1227,7 @@ Can we prevent Alice from cheating even if the players are not in the same physi
                         \item Lot of exploits build on injecting and executing malicious code
                         \item By separating the memory space of a process into executable and modifiable parts, code injection can be prevented
                         \item Problem: modern computer architectures do not separate code from data
-                        \item Limitation: cannot fully protect programs that create and execute code at runtime (e.g., just-in-time compilers)
+                        \item Limitation: cannot fully protect programs that create and execute code at runtime (e.g. just-in-time compilers)
                         \item Circumventing Executable Space Protection
                               \begin{itemize}[nosep]
                                   \item Attacker can re-use existing code from the memory space of the process for malicious purposes
@@ -1243,13 +1243,13 @@ Can we prevent Alice from cheating even if the players are not in the same physi
                         \item In order to reliably jump to an exploited code, the attacker needs to know its address
                         \item Address Space Layout Randomization (ASLR)
                               \begin{itemize}[nosep]
-                                  \item randomly arrange the positions of the executable, the stack, and the heap in the process’s address space
+                                  \item randomly arrange the positions of the executable, the stack, and the heap in the process's address space
                                   \item may prevent return-to-libc attacks
-                                  \item most operating systems (e.g., Windows, Linux) implement some randomization
+                                  \item most operating systems (e.g. Windows, Linux) implement some randomization
                               \end{itemize}
                         \item Counter-countermeasures
                               \begin{itemize}[nosep]
-                                  \item information leakage (e.g., printf vulnerability)
+                                  \item information leakage (e.g. printf vulnerability)
                                   \item random guessing (Heap spraying)
                               \end{itemize}
                     \end{itemize}
@@ -1284,15 +1284,15 @@ Can we prevent Alice from cheating even if the players are not in the same physi
           \begin{itemize}[nosep]
               \item \mintinline{c}|sprintf|: writes to buffer
               \item \mintinline{c}|fprintf|: writes to file
-              \item other members of the printf family (e.g., \mintinline{c}|snprintf|)
+              \item other members of the printf family (e.g. \mintinline{c}|snprintf|)
               \item \mintinline{c}|printk|: used in the Linux kernel
-              \item other functions that use format strings (e.g., \mintinline{c}|syslog|)
+              \item other functions that use format strings (e.g. \mintinline{c}|syslog|)
           \end{itemize}
     \item Format placeholders
           \begin{itemize}[nosep]
-              \item \mintinline{c}|%s| – string
-              \item \mintinline{c}|%d| – number (output in decimal format)
-              \item \mintinline{c}|%x| – number (output in hexadecimal format)
+              \item \mintinline{c}|%s| -- string
+              \item \mintinline{c}|%d| -- number (output in decimal format)
+              \item \mintinline{c}|%x| -- number (output in hexadecimal format)
               \item Special placeholder: \mintinline{c}|%n|
                     \begin{itemize}[nosep]
                         \item argument must be a pointer to a signed integer, where the number of characters printed so far will be written
@@ -1345,15 +1345,377 @@ Can we prevent Alice from cheating even if the players are not in the same physi
                     \begin{itemize}[nosep]
                         \item work with file descriptors instead of filenames
                         \item rely on filesystem access checks
-                        \item be careful with directories that are writable by everyone (e.g., \texttt{/tmp/})
+                        \item be careful with directories that are writable by everyone (e.g. \texttt{/tmp/})
                         \item lock resources (files, databases, etc.)
-                        \item look out for non-atomic operations (e.g., \mintinline{c}|num++|)
-                        \item synchronization (e.g., semaphore, mutex)
+                        \item look out for non-atomic operations (e.g. \mintinline{c}|num++|)
+                        \item synchronization (e.g. semaphore, mutex)
                     \end{itemize}
           \end{itemize}
 \end{itemize}
 \section{Web vulnerabilities}
+\subsubsection*{File Inclusion Vulnerabilities}
+\begin{itemize}[nosep]
+    \item Passing unvalidated user input to functions that load files
+          \begin{itemize}[nosep]
+              \item remote: webserver loads a file from another server
+                    \begin{itemize}[nosep]
+                        \item Attacker may run arbitrary PHP code on the vulnerable webserver
+                        \item Prevention in PHP: disable allow\_url\_include
+                              \begin{itemize}[nosep]
+                                  \item disabled by default in newer versions
+                                  \item prevents the inclusion of remote files
+                              \end{itemize}
+                    \end{itemize}
+              \item local: webserver loads a local file
+                    \begin{itemize}[nosep]
+                        \item Directory traversal
+                              \begin{itemize}[nosep]
+                                  \item attacker may read any file (to which the webserver process has access)
+                              \end{itemize}
+                        \item Uploading PHP code to the webserver
+                              \begin{itemize}[nosep]
+                                  \item enables the attacker to execute arbitrary code on the webserver
+                              \end{itemize}
+                    \end{itemize}
+          \end{itemize}
+    \item Susceptible functions in PHP:
+          \begin{itemize}
+              \item \mintinline{php}|include(file)|, \mintinline{php}|require(file)|, \mintinline{php}|include_once(file)|, \mintinline{php}|require_once(file)|
+              \item parse the content of the specified file (anything between <?php and ?> is interpreted, anything outside is sent to the output)
+              \item used to load PHP libraries, classes, etc.
+          \end{itemize}
+    \item Similar functions in other languages
+    \item Prevention: do not trust user input at all
+          \begin{itemize}[nosep]
+              \item always validate input before using it
+              \item do not use values directly (e.g. \mintinline{php}|switch| statement)
+          \end{itemize}
+\end{itemize}
+\subsubsection*{File Upload Vulnerability}
+\begin{itemize}
+    \item File upload form
+    \item Attacker may
+          \begin{itemize}
+              \item upload malicious PHP code \texttt{attack.php} $\rightarrow$ arbitrary code execution with \texttt{GET attack.php}
+              \item upload, for example, \texttt{.htaccess} (per-directory configuration file for Apache webserver) $\rightarrow$ circumvent access control
+              \item overwrite existing files
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Command Injection}
+\begin{itemize}[nosep]
+    \item Example: sendmail.php:
+          \begin{minted}{php}
+            <?php $address = $_GET["email"];
+            system("mail $address -s 'Welcome to example.com!'< /var/www/welcome.txt");
+            ?>
+        \end{minted}
+    \item exploit:
+          \begin{itemize}[nosep]
+              \item \texttt{GET sendmail.php?email=foo@bar.com; rm important\_file;} $\rightarrow$ \texttt{system("mail foo@bar.com; rm important\_file; -s \dots}
+          \end{itemize}
+\end{itemize}
+\subsubsection*{SQL Injection Vulnerability}
+\begin{itemize}[nosep]
+    \item Attacker may execute any statement
+          \begin{itemize}[nosep]
+              \item delete an entire table: \texttt{'; DROP TABLE users; --}
+              \item change the password of another user:
+                    \texttt{'; UPDATE users SET password='pwnd' WHERE email = 'victim@example.com'; --}
+          \end{itemize}
+    \item Some databases even allow running system commands
+          \begin{itemize}[nosep]
+              \item example: Microsoft SQL Server \mintinline{sql}|xp_cmdshell|
+          \end{itemize}
+    \item Attempts to Prevent SQL Injection
+          \begin{itemize}[nosep]
+              \item Escape special characters
+                    \begin{itemize}[nosep]
+                        \item idea: add backslash \textbackslash before characters ', '', \textbackslash, and \texttt{NUL} to escape them
+                        \item however, this is not as simple as it sounds
+                    \end{itemize}
+              \item Secret table and column names
+                    \begin{itemize}[nosep]
+                        \item attacker can guess and test them
+                        \item most databases have queries for reading the database and table schema
+                              \begin{itemize}[nosep]
+                                  \item if query results are displayed, attacker can read the schema
+                              \end{itemize}
+                    \end{itemize}
+          \end{itemize}
+    \item Preventing SQL Injection
+          \begin{itemize}[nosep]
+              \item \underline{Properly} escape special characters
+              \item Object-relational mapping (ORM) framework
+                    \begin{itemize}[nosep]
+                        \item eliminates the need to develop potentially buggy and vulnerable custom code
+                    \end{itemize}
+              \item Prepared / parameterized SQL statements
+                    \begin{itemize}[nosep]
+                        \item execute the same query or statement repeatedly, only changing certain parameter values between the executions
+                        \item advantageous for both performance and security
+                              \begin{itemize}[nosep]
+                                  \item statement needs to be parsed and optimized only once
+                                  \item statement cannot be changed using SQL injection
+                              \end{itemize}
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Cross-Site Scripting}
+\begin{itemize}[nosep]
+    \item A cross-site scripting (XSS) vulnerability enables an attacker to inject client-side script code into pages generated by a web server
+          \begin{itemize}[nosep]
+              \item attacker can use an XSS vulnerability to run malicious scripts on clients (i.e., web browsers) that view the webpage, and steal their private information, credentials, send requests in their name, etc.
+              \item Types (note that there is also DOM-based XSS)
+                    \begin{multicols}{2}
+                        \item Stored XSS
+                        \begin{itemize}[nosep]
+                            \item attacker tricks the webserver into storing and serving a malicious script
+                            \item malicious script is sent to clients visiting the webpage
+                        \end{itemize}
+                        \item Reflected XSS
+                        \begin{itemize}[nosep]
+                            \item attacker tricks a client into sending a specially crafted request to the server
+                            \item malicious script is reflected back to the client as part of the response
+                        \end{itemize}
+                    \end{multicols}
+          \end{itemize}
+    \item Preventing XSS
+          \begin{itemize}[nosep]
+              \item Validate and filter all input data on the webserver
+                    \begin{itemize}[nosep]
+                        \item even if they are not processed by the webserver
+                        \item some web browsers also try to detect reflected XSS by testing if a script received from the server was sent in the request
+                    \end{itemize}
+              \item Scripts may be specified in
+                    \begin{itemize}[nosep]
+                        \item script tag: \mintinline{html}|<script>|
+                        \item event handlers: \mintinline{html}|onClick|, \mintinline{html}|onLoad|, \mintinline{html}|onSubmit|, \dots
+                        \item \dots
+                    \end{itemize}
+              \item Remove or encode all special HTML characters
+                    \begin{itemize}[nosep]
+                        \item encoding: \texttt{\&lt;} instead of \texttt{<}, \texttt{\&quot;} instead of \texttt{''}
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Cross-Site Request Forgery}
+\begin{itemize}[nosep]
+    \item A cross-site request forgery (CSRF) vulnerability enables an attacker to trick a user into sending malicious requests to a webpage
+    \item Similar to reflected XSS, an attacker has many options for tricking the user into opening a malicious URL
+          \begin{itemize}[nosep]
+              \item sending link in e-mail or instant message
+              \item displaying link on some other website
+              \item \dots
+          \end{itemize}
+    \item Attackers might use a CSRF vulnerability to
+          \begin{itemize}[nosep]
+              \item open a backdoor on a server
+              \item initiate a wire transfer on an online banking website
+              \item \dots
+          \end{itemize}
+    \item May enable bypassing other access control methods
+          \begin{itemize}[nosep]
+              \item for example, if access to a server is limited to clients on the same local network
+          \end{itemize}
+    \item Prevention
+          \begin{itemize}[nosep]
+              \item Webserver has to verify that the request originates from a page belonging to the website (i.e., user ''clicked'' a link on the site, instead of opening a link from some other source)
+              \item Techniques
+                    \begin{itemize}[nosep]
+                        \item synchronizer / secret token
+                              \begin{itemize}[nosep]
+                                  \item pages generated by the server include a secret input field
+                                  \item when a user performs an action on the website, the value of the secret field is sent in the request $\rightarrow$ server can verify origin of the request
+                              \end{itemize}
+                        \item referrer validation
+                              \begin{itemize}[nosep]
+                                  \item HTTP requests may include a header field that identifies the address of the page that linked to the request resource
+                                  \item however, referrer might be missing (or, in some cases, forged)
+                              \end{itemize}
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
 \section{Malware}
+\begin{itemize}[nosep]
+    \item Malware (short for malicious software): software used to disrupt computer operations, gather sensitive information, or gain access to private systems
+    \item Backdoor
+          \begin{itemize}[nosep]
+              \item secret entry point into a system or program that circumvents the usual security access procedures
+              \item maintenance hook: legitimate use for debugging and testing
+              \item asymmetric backdoor: can be used only by the developer, even if the implementation becomes public
+              \item may be introduced by a malicious compiler
+          \end{itemize}
+    \item Logic bomb
+          \begin{itemize}[nosep]
+              \item code embedded in a legitimate program, which ''explodes'' when certain conditions are met (e.g. time, presence of some files, hostnames)
+              \item may alter or delete data, system functionality, etc.
+          \end{itemize}
+    \item Trojan Horse
+          \begin{itemize}[nosep]
+              \item an apparently benign application that has some hidden malicious functionality
+              \item Runs with and abuses the privileges of the victim user
+              \item May implement various kinds of malicious functionality
+              \item Typically spread using social-engineering techniques
+                    \begin{itemize}
+                        \item providing free (but illegal) copies of commercial software
+                        \item sending as an e-mail attachment
+                        \item drive-by download: authorized by the user without understanding the consequences
+                    \end{itemize}
+          \end{itemize}
+    \item Virus
+          \begin{itemize}
+              \item parasitic self-replicating malware
+              \item resident virus: remains in memory (e.g. as part of the OS), may overwrite interrupt handlers and other functions
+              \item Infection targets
+                    \begin{itemize}[nosep]
+                        \item boot sector: targets the boot sector or Master Boot Record of the infected host's hard drive or removable media
+                        \item executable files: targets binary executable files
+                        \item documents (macro viruses): targets word processor and spreadsheet documents that support embedding macro programs (e.g. Microsoft Office)
+                    \end{itemize}
+              \item Typical phases of operation
+                    \begin{enumerate}[nosep]
+                        \item dormant: virus is waiting for an external event
+                        \item propagation: virus places copies of itself into other executables and files
+                        \item triggering: virus is activated by some external event
+                        \item execution: virus executes the payload, which performs malicious actions
+                    \end{enumerate}
+          \end{itemize}
+    \item Worm
+          \begin{itemize}[nosep]
+              \item runs independently, without a host program or file
+              \item Propagates a copy of itself to other systems
+                    \begin{itemize}[nosep]
+                        \item typically by exploiting vulnerabilities, such as common software vulnerabilities or weak passwords
+                        \item over the Internet, over a local computer network, or through removable media (e.g. USB flash drives)
+                        \item e-mail worm: propagating as e-mail attachments
+                    \end{itemize}
+              \item Payload
+                    \begin{itemize}[nosep]
+                        \item either carried by the worm or downloaded from a server
+                        \item may perform other tasks (e.g. spyware, ransomware, botnet)
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Spyware, Adware, Cryptojacking, Randomware}
+\begin{itemize}[nosep]
+    \item Spyware
+          \begin{itemize}[nosep]
+              \item collect sensitive information about the user
+              \item may record keystrokes, mouse clicks, browsing activity, etc.
+              \item attacker can use it to collect personal information (e.g. social security number, financial information, such as credit card numbers)
+          \end{itemize}
+    \item Adware
+          \begin{itemize}[nosep]
+              \item display unwanted advertisement to the user (e.g. pop-up windows, injecting into web pages, ...)
+              \item legitimate use: advertisement-supported non-malicious software
+          \end{itemize}
+    \item Cryptojacking
+          \begin{itemize}[nosep]
+              \item use the infected computer's resources to ''mine'' proof-of-work cryptocurrencies (e.g., Bitcoin) for the attacker
+          \end{itemize}
+    \item Ransomware
+          \begin{itemize}
+              \item holds a computer system or data hostage
+              \item disables access to the computer system or certain files on it (e.g., screen locking, browser locking)
+              \item may also threaten to publish the victim's files online
+              \item ''scareware'': threaten or deceive users (e.g., fake antivirus)
+              \item Payment
+                    \begin{itemize}[nosep]
+                        \item computer system or data is released upon payment
+                        \item payment through Bitcoin, premium-rate text messages, wire transfers, etc.
+                    \end{itemize}
+              \item Crypto-ransomware
+                    \begin{enumerate}[nosep]
+                        \item ransomware encrypts files using a random symmetric key
+                        \item symmetric key is encrypted using the attacker's public key and then deleted
+                        \item attacker decrypts the symmetric key in exchange for payment
+                    \end{enumerate}
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Botnets}
+\begin{itemize}[nosep]
+    \item collection of computers controlled through the Internet
+          \begin{itemize}[nosep]
+              \item legal application: distributed computing
+              \item illegal application: taking advantage of compromised ``zombie'' computers
+          \end{itemize}
+    \item Zombie computers
+          \begin{itemize}[nosep]
+              \item laptop and desktop computers
+              \item IoT devices (e.g., remote cameras, home routers, DVRs)
+          \end{itemize}
+    \item Typically used by attackers to
+          \begin{itemize}[nosep]
+              \item send spam e-mail or perform click fraud
+              \item collect personal information $\approx$ spyware
+              \item attack other systems (e.g., denial-of-service attack by flooding with requests)
+          \end{itemize}
+    \item Architectures
+          \begin{multicols}{2}
+              \begin{itemize}[nosep]
+                  \item Client-Server
+                        \begin{itemize}[nosep]
+                            \item publish digitally signed commands on
+                                  websites, IRC channels, or other standard protocols
+                            \item C\&C servers are typically redundant, and often implemented on compromised computers
+                        \end{itemize}
+                  \item Peer-to-Peer
+                        \begin{itemize}[nosep]
+                            \item commands distributed over a peer-to-peer (P2P) network
+                            \item no single (or few) point of failure $\rightarrow$ more resilient to shutdown or hijack
+                        \end{itemize}
+              \end{itemize}
+          \end{multicols}
+\end{itemize}
+\subsubsection*{Rootkit}
+\begin{itemize}[nosep]
+    \item enables unauthorized access to a computer system
+    \item hides its own existence
+    \item Typically installed by attackers after compromising a system
+          \begin{itemize}[nosep]
+              \item provides backdoor for easy reentry
+              \item keeps the compromise hidden from operators $\rightarrow$ persistent and stealthy compromise
+          \end{itemize}
+    \item Installation
+          \begin{itemize}[nosep]
+              \item typically requires root (or administrator) access
+              \item may be performed manually or automatically
+          \end{itemize}
+    \item Techniques for hiding
+          \begin{itemize}[nosep]
+              \item Rootkit must be installed and run on the compromised system $\rightarrow$ without hiding, it might be visible as a file or running process
+              \item Modifying system commands and applications
+                    \begin{itemize}[nosep]
+                        \item ls: lists files in a directory $\rightarrow$ modify to omit the rootkit files
+                        \item ps: lists running processes $\rightarrow$ modify to omit the rootkit proce
+                    \end{itemize}
+              \item Modifying or disabling event logging
+                    \begin{itemize}[nosep]
+                        \item system logs may provide evidence of an attack $\rightarrow$ remove log entries
+                    \end{itemize}
+              \item Disabling anti-virus and anti-rootkit software
+              \item Modifying the kernel, system drivers, and other core parts of the OS
+                    \begin{itemize}[nosep]
+                        \item rootkits may tamper with any system call, security mechanism, etc.
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Malware Detection}
+\begin{itemize}[nosep]
+    \item ``Arms race'' between malware scanners and concealment techniques
+    \item Signature-based malware scanner: detects known viruses based on patterns
+    \item Polymorphic malware: ''mutates'' (i.e., changes) itself to avoid signature-based detection
+    \item Encrypted malware
+          \begin{itemize}[nosep]
+              \item common technique for polymorphic malware
+              \item most of the malware is encrypted, except for a short code that can decrypt it
+              \item decryption code must be in plaintext $\rightarrow$ signature for self-decryption (very rare for non-malicious software)
+          \end{itemize}
+    \item Metamorphic malware: changes the entire code upon each infection (including, e.g., decryption code)
+    \item Heuristic rule-based malware scanner: identify code fragments commonly used by malware
+    \item Behavior-based malware detection: detect behavior characteristic to malware (e.g., sending data to C\&C servers)
+    \item White-list known good programs, verify integrity
+\end{itemize}
 \section{Secure development}
 \section{Detection}
 \section{Isolation}
