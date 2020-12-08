@@ -1717,6 +1717,116 @@ Can we prevent Alice from cheating even if the players are not in the same physi
     \item White-list known good programs, verify integrity
 \end{itemize}
 \section{Secure development}
+\subsubsection*{compile-time buffer-overflow prevention}
+\begin{itemize}[nosep]
+    \item Programming Languages and platforms that do not allow direct memory access typically prevent buffer overflows
+          \begin{itemize}[nosep]
+              \item C\# and other managed .NET languages
+              \item Java, Python, PHP, Perl
+              \item However,
+                    \begin{itemize}[nosep]
+                        \item safety and security may come at the cost of lower performance (bounds checking can increase execution time)
+                        \item native code invoked from these languages is still vulnerable (e.g. through Java Native Interface)
+                        \item be careful with libraries that might rely on native code
+                        \item there might be vulnerabilities in the interpreter/virtual machine of the language (e.g., JVM or CLR)
+                    \end{itemize}
+          \end{itemize}
+    \item Safe Functions
+          \begin{table}[H]
+              \begin{tabular}{ll}
+                  Unsafe                                                        & Less unsafe                                                               \\\toprule
+                  \multirow{2}{*}{\mintinline{c}|strcpy(char *src, char *dst)|} & \mintinline{c}|strncpy(char *src, char *dst, size_t n)| (not really safe) \\
+                                                                                & \mintinline{c}|strlcpy(char *src, char *dst, size_t n)|                   \\\midrule
+                  \multirow{2}{*}{\mintinline{c}|strcat(char *s1, char *s2)|}   & \mintinline{c}|strncat(char *s1, char *s2, size_t n)|                     \\
+                                                                                & \mintinline{c}|strlcat(char *s1, char *s2, size_t n)|                     \\\midrule
+                  \mintinline{c}|sprintf(char *str, char* format, ...)|         & \mintinline{c}|snprintf(char *str, size_t n, char* format, ...)|          \\\midrule
+                  \mintinline{c}|gets(char *str)|                               & \mintinline{c}|fgets(char *str, int n, FILE *file)|                       \\\bottomrule
+              \end{tabular}
+          \end{table}
+    \item Safe Libraries
+          \begin{itemize}[nosep]
+              \item e.g. String class \mintinline{c++}|std::string|; mostly safe, but \mintinline{c++}|[]| operator can cause issues
+              \item same with Array class \mintinline{c++}|std::vector|
+          \end{itemize}
+    \item Stack Canary Compiler Extension
+          \begin{itemize}[nosep]
+              \item at the beginning of the function, a special value is placed on the stack between the local variables and the return address
+              \item buffer overflows that reach the return address will necessarily overwrite the special value
+              \item before returning, the function checks if the value is intact
+          \end{itemize}
+\end{itemize}
+\subsubsection*{Secure Programming/Defensive Programming}
+\begin{itemize}[nosep]
+    \item Techniques and approaches for improving the source code
+    \item Avoiding typical errors that lead to common vulnerabilities
+    \item assume nothing (e.g., input length)
+    \item expect everything (e.g., errors and misuse)
+    \item i.e., ``be paranoid''
+    \item Use safe functions (e.g., never use \mintinline{c}|gets|, use \mintinline{c}|fgets| instead), use safe libraries
+    \item Do not use input in vulnerable functions directly (e.g. file inclusion, string output)
+    \item Beware integer type conversions and promotion
+    \item Do not allow changes between time of check and time of use to prevent race condition vulnerabilities
+    \item Use prepared statements for SQL queries
+    \item Sanitize user input before sending it to other systems (e.g., XSS)
+    \item Validate the sources of HTTP requests to prevent CSRF
+    \item \dots
+\end{itemize}
+\subsubsection*{Input Validation}
+\begin{multicols}{2}
+    \begin{itemize}
+        \item blacklist
+              \begin{itemize}[nosep]
+                  \item list known bad inputs
+                  \item do not allow inputs that are on the blacklist
+                  \item listing all bad inputs is difficult and error-prone\vfill\null
+                  \item typically has low impact on usability
+              \end{itemize}
+        \item whitelist
+              \begin{itemize}[nosep]
+                  \item list known good inputs
+                  \item allow only inputs that are on the whitelist
+                  \item typically more secure
+              \end{itemize}
+    \end{itemize}
+\end{multicols}
+\subsubsection*{Code Analysis}
+\begin{itemize}
+    \begin{multicols}{2}
+        \item static
+        \begin{itemize}[nosep]
+            \item input: typically source code
+            \item finds vulnerabilities by considering possible executions of the source code
+            \item typically ``white-box'' approach
+        \end{itemize}
+        \item dynamic
+        \begin{itemize}[nosep]
+            \item input: typically binary (compiled) code
+            \item finds vulnerabilities by executing the code with various inputs
+            \item typically ``black-box'' approach
+        \end{itemize}
+    \end{multicols}
+    \item Static analysis may find the root cause of a problem, while dynamic analysis can detect only when the problem occurs
+\end{itemize}
+\subsubsection*{Taint Analysis}
+\begin{itemize}[nosep]
+    \item attempts to identify which variables and objects can be modified by untrusted user input
+          \begin{itemize}[nosep]
+              \item if the source of the value of a variable is untrustworthy (e.g., network packets, user files, user input), then the variable is tainted
+              \item any variable whose value is derived from (e.g., through mathematical or string operators) from a tainted variable is also tainted
+              \item tainted variable passed to a vulnerable function without sanitization $\rightarrow$ potential software vulnerability
+          \end{itemize}
+    \item Information flow analysis
+          \begin{itemize}[nosep]
+              \item assign a security level to each source
+              \item each object inherits the security levels of the sources and other objects from which it is derived
+              \item may be used to detect the leakage of confidential information
+          \end{itemize}
+    \item In practice
+          \begin{itemize}[nosep]
+              \item static: analyze source code $\rightarrow$ rewrite source code if vulnerability is found
+              \item dynamic: keep track of tainted variables during run time $\rightarrow$ throw an exception
+          \end{itemize}
+\end{itemize}
 \section{Detection}
 \section{Isolation}
 \section{Denial of Service attacks}
